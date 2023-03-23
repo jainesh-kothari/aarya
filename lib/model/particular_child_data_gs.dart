@@ -32,7 +32,6 @@ class Data {
   int? mobileNumber;
   String? categoryId;
   String? cast;
-  Null? otherCast;
   String? motherAdhar;
   String? fatherOccupation;
   String? motherSelfHelpGroup;
@@ -42,12 +41,6 @@ class Data {
   Null? weightOnBirth;
   Null? heightOnBbirth;
   bool? isVerified;
-  String? createdAT;
-  String? updatedAt;
-  Null? deletedAt;
-  String? createdBy;
-  Null? updatedBy;
-  Null? deletedBy;
   bool? deleted;
   String? stateId;
   String? districtId;
@@ -70,7 +63,6 @@ class Data {
         this.mobileNumber,
         this.categoryId,
         this.cast,
-        this.otherCast,
         this.motherAdhar,
         this.fatherOccupation,
         this.motherSelfHelpGroup,
@@ -80,12 +72,6 @@ class Data {
         this.weightOnBirth,
         this.heightOnBbirth,
         this.isVerified,
-        this.createdAT,
-        this.updatedAt,
-        this.deletedAt,
-        this.createdBy,
-        this.updatedBy,
-        this.deletedBy,
         this.deleted,
         this.stateId,
         this.districtId,
@@ -108,7 +94,6 @@ class Data {
     mobileNumber = json['mobileNumber'];
     categoryId = json['categoryId'];
     cast = json['cast'];
-    otherCast = json['otherCast'];
     motherAdhar = json['motherAdhar'];
     fatherOccupation = json['fatherOccupation'];
     motherSelfHelpGroup = json['motherSelfHelpGroup'];
@@ -118,12 +103,6 @@ class Data {
     weightOnBirth = json['weightOnBirth'];
     heightOnBbirth = json['heightOnBbirth'];
     isVerified = json['isVerified'];
-    createdAT = json['createdAT'];
-    updatedAt = json['updatedAt'];
-    deletedAt = json['deletedAt'];
-    createdBy = json['createdBy'];
-    updatedBy = json['updatedBy'];
-    deletedBy = json['deletedBy'];
     deleted = json['deleted'];
     stateId = json['stateId'];
     districtId = json['districtId'];
@@ -148,7 +127,6 @@ class Data {
     data['mobileNumber'] = this.mobileNumber;
     data['categoryId'] = this.categoryId;
     data['cast'] = this.cast;
-    data['otherCast'] = this.otherCast;
     data['motherAdhar'] = this.motherAdhar;
     data['fatherOccupation'] = this.fatherOccupation;
     data['motherSelfHelpGroup'] = this.motherSelfHelpGroup;
@@ -158,12 +136,6 @@ class Data {
     data['weightOnBirth'] = this.weightOnBirth;
     data['heightOnBbirth'] = this.heightOnBbirth;
     data['isVerified'] = this.isVerified;
-    data['createdAT'] = this.createdAT;
-    data['updatedAt'] = this.updatedAt;
-    data['deletedAt'] = this.deletedAt;
-    data['createdBy'] = this.createdBy;
-    data['updatedBy'] = this.updatedBy;
-    data['deletedBy'] = this.deletedBy;
     data['deleted'] = this.deleted;
     data['stateId'] = this.stateId;
     data['districtId'] = this.districtId;

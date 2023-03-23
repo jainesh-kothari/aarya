@@ -295,7 +295,7 @@ class _GrowthMonitoringState extends State<GrowthMonitoring> {
 
                                   String? response = await ApiService().addGrowthMonitoring(userId.toString(), height, weight , date_controller.text);
 
-                                  if(response == 201){
+                                  if(response == "201"){
                                     Fluttertoast.showToast(msg: "Your data save Successfully");
                                   } else {
                                     Fluttertoast.showToast(msg: "Something went wrong");

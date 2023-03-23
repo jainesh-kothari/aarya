@@ -10,12 +10,13 @@ import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../model/category_of_cast.dart';
 import '../model/get_child_gs.dart';
 import '../util/appcontants.dart';
 
 class ApiService {
- // static const String API_LINK = "http://34.125.0.143";
-  static const String API_LINK = "http://34.125.95.71";
+   static const String API_LINK = "http://34.125.107.40";
+  // static const String API_LINK = "http://34.125.95.71";
   late SharedPreferences _sharedPreferences;
 
   Future<LoginResponse?> getLoginDetails(String mobile, String mpin) async {
@@ -123,7 +124,7 @@ class ApiService {
 
       var response = await http.get(url, headers: headers);
 
-      print(response);
+      print(jsonDecode(response.body));
       if (response.statusCode == 200) {
         return SingleChildData.fromJson(jsonDecode(response.body));
       } else {
@@ -242,7 +243,7 @@ class ApiService {
   }
 
 
-  Future<List<CastCategoryData>?> getCastCategory() async {
+  Future<List<CastCategoryData>?> getCategory() async {
     try {
       _sharedPreferences = await SharedPreferences.getInstance();
       String token = _sharedPreferences.getString(AppConstants.TOKEN)!;
@@ -258,6 +259,42 @@ class ApiService {
 
       if (response.statusCode == 200) {
         CastCategory cast = CastCategory.fromJson(jsonDecode(response.body));
+
+        return cast.data;
+
+
+      } else {
+        return null;
+      }
+    } catch (e) {
+      log(e.toString());
+    }
+    return null;
+  }
+
+  Future<List<CastCategoryDetailsData>?> getCastCategory(String category, bool lang) async {
+    try {
+      _sharedPreferences = await SharedPreferences.getInstance();
+      String token = _sharedPreferences.getString(AppConstants.TOKEN)!;
+      var url = Uri.parse("$API_LINK/common/cast/$category");
+
+      final headers = <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': "Bearer $token"
+      };
+      String la = "";
+      if(lang) {
+        la ="en";
+      } else {
+        la ="hi";
+      }
+
+      final json ='{ "lang":"$la"}';
+
+      var response = await http.post(url, headers: headers, body: json);
+      print(jsonDecode(response.body));
+      if (response.statusCode == 201) {
+        CastCategoryDetails cast = CastCategoryDetails.fromJson(jsonDecode(response.body));
 
         return cast.data;
 
