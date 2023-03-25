@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:arya/language/app_translations.dart';
 import 'package:arya/model/get_child_gs.dart';
 import 'package:arya/model/particular_child_data_gs.dart';
-import 'package:arya/registration/list_view.dart';
+import 'package:arya/ladies/list_view.dart';
 import 'package:arya/util/appcontants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

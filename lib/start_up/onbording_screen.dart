@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 
+import '../language/app_translations.dart';
 import '../registration/login_screen.dart';
 
 class OnBoardingScreen extends StatefulWidget {
@@ -32,18 +33,18 @@ class _OnBoardingScreenState extends State<StatefulWidget> {
       pages: [
 
         PageViewModel(
-            title: "Screen 1 ",
-            body:"description ",
+            title: AppTranslations.of(context)!.text("on_boarding_1"),
+            body: AppTranslations.of(context)!.text("on_boarding_1_des"),
             decoration: pageDecoration("assets/images/onborading_one.jpg")),
 
         PageViewModel(
-            title: "Screen 1 ",
-            body:"description ",
+            title: AppTranslations.of(context)!.text("on_boarding_2"),
+            body: AppTranslations.of(context)!.text("on_boarding_2_des"),
             decoration: pageDecoration("assets/images/onborading_two.jpg")),
 
         PageViewModel(
-            title: "Screen 1 ",
-            body:"description ",
+            title: AppTranslations.of(context)!.text("on_boarding_3"),
+            body: AppTranslations.of(context)!.text("on_boarding_3_des"),
             decoration: pageDecoration("assets/images/onborading_three.jpg")),
       ],
       onDone: () => {

@@ -17,6 +17,7 @@
   "sign_up": " अकाउंट बनाए ",
   "pargent_lady": "गर्भवती महिला",
   "children": "बच्चे",
+  "children_heading": "मिशन आर्या : भीम",
   "new_registration": "नया पंजीकरण",
   "take_home_rashan": "टेक होम राशन (THR)",
   "extra_food": "अतिरिक्त भोजन अनुपूरक (सप्लीमेंट्स)",
@@ -62,15 +63,15 @@
   "category": "वर्ग",
   "select_category": "कृपया एक वर्ग चुनें",
   "belong_minority":"क्या आप धार्मिक अल्पसंख्यक से संबंधित हैं?",
-  "p_lady_name": "महिला का नाम",
-  "husband_name": "पति का नाम",
+  "p_lady_name": "नाम",
+  "husband_name": "पिता / पति का नाम",
   "first_pregnancy": "यह आपकी पहली गर्भावस्था है ?",
   "garbhPath_before": "क्या आप पहले गर्भपात हुआ हैं ?",
   "Labhahti_death": "क्या लाभार्थी की मृत्यु हो गई है ?",
   "pregnancy": "गर्भावस्था",
   "age": "उम्र",
   "last_menstruation_cycle": "अंतिम माहवारी",
-  "adolescent_girls_and_women": "किशोरियां और महिलाएं",
+  "adolescent_girls_and_women": "मिशन आर्या : अनीमिया मुक्त दौसा",
   "father_occupation": "पिता का व्यवसाय",
   "select_occupation": "कृपया व्यवसाय चुनें",
   "aadhar_number_mother": "माता का आधार नंबर",
@@ -80,5 +81,18 @@
   "enter_cast": "अपनी जाति दर्ज करें",
   "submit": "आगे बढ़ो",
   "verify": "verify",
-  "update_user": "जानकारी अपडेट करें"
+  "update_user": "जानकारी अपडेट करें",
+
+  "on_boarding_1": "सब कुछ एक ही स्थान पर",
+  "on_boarding_2": "अपडेट",
+  "on_boarding_3": "पूरी जानकारी रखें",
+
+  "on_boarding_1_des": "बच्चों, उनकी माताओं और किशोरियों के बारे में सभी जानकारी प्राप्त करें",
+  "on_boarding_2_des": "दैनिक  यात्राओं और लाभार्थियों की स्थिति जानें",
+  "on_boarding_3_des": "दवाएं, टीकाकरण, और गर्म भोजन और नाश्ता",
+
+  "total_child": "बच्चे",
+  "total": "कुल",
+  "are_you_married": "वैवाहिक स्थिति",
+  "pregnancy_status": "क्या आप गर्भवती हैं?"
 }

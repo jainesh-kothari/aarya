@@ -1,13 +1,15 @@
 import 'package:arya/children/child_home_page.dart';
 import 'package:arya/ladies/ladies_home_page.dart';
 import 'package:arya/language/app_translations.dart';
-import 'package:arya/registration/list_view.dart';
+import 'package:arya/ladies/list_view.dart';
 import 'package:arya/start_up/change_language.dart';
 import 'package:arya/util/appcontants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'login_screen.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -70,7 +72,7 @@ class _HomePageState extends State<HomePage> {
                           borderRadius: BorderRadius.circular(15.0)),
                       child: InkWell(
                         onTap: (){
-                        //  Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => LadiesHomePage()));
+                          Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => LadiesHomePage()));
                         },
                         child: Column(
 
@@ -135,7 +137,7 @@ class _HomePageState extends State<HomePage> {
 
                             Padding(
                               padding: const EdgeInsets.all(6.0),
-                              child: Text(AppTranslations.of(context)!.text("children"), style: TextStyle(
+                              child: Text(AppTranslations.of(context)!.text("children_heading"), style: TextStyle(
                                   fontSize: 14, color: Colors.black,fontWeight: FontWeight.bold
                               )),
                             )
@@ -193,7 +195,7 @@ class _HomePageState extends State<HomePage> {
             ListTile(
               leading: Icon(Icons.logout_outlined), title: Text("LogOut"),
               onTap: () {
-                Navigator.pop(context);
+                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => LoginScreen()));
               },
             ),
           ],

@@ -21,12 +21,14 @@ class _AddNewladiesState extends State<AddNewladies> {
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(statusBarColor: Color(AppConstants.BLUE_COLOR[0])));
 
-    final format = DateFormat("yyyy-MM-dd");
+    final format = DateFormat("dd-MM-yyyy");
     String radioButtonItem = 'ONE';
     int id = 1;
     TextEditingController name_controller = new TextEditingController(text:'');
     TextEditingController aadhar_controller = new TextEditingController(text:'');
-    TextEditingController number_controller = new TextEditingController(text:'+91');
+    TextEditingController number_controller = new TextEditingController(text:'');
+
+    String? married;
 
     return Scaffold(
       appBar: AppBar(
@@ -67,9 +69,9 @@ class _AddNewladiesState extends State<AddNewladies> {
               ),
 
 
-              Padding(
-                padding: const EdgeInsets.only(left: 8.0,top: 8.0),
-                child: Text("Lady Image", style: TextStyle(
+              const Padding(
+                padding: EdgeInsets.only(left: 8.0,top: 8.0),
+                child: Text("Image", style: TextStyle(
                     fontSize: 14, color: Colors.black,fontWeight: FontWeight.bold
                 )),
               ),
@@ -137,6 +139,8 @@ class _AddNewladiesState extends State<AddNewladies> {
                 padding: const EdgeInsets.all(8.0),
                 child: TextField(
                   controller: aadhar_controller,
+                  maxLength: 12,
+                  keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
                     enabledBorder: OutlineInputBorder(
@@ -148,6 +152,7 @@ class _AddNewladiesState extends State<AddNewladies> {
                   ),
                 ),
               ),
+
 
               Padding(
                 padding: const EdgeInsets.only(left: 8.0,top: 8.0),
@@ -169,6 +174,7 @@ class _AddNewladiesState extends State<AddNewladies> {
                   ),
                 ),
               ),
+
 
               Padding(
                 padding: const EdgeInsets.only(left: 8.0,top: 8.0),
@@ -223,6 +229,8 @@ class _AddNewladiesState extends State<AddNewladies> {
                 padding: const EdgeInsets.all(8.0),
                 child: TextField(
                   controller: number_controller,
+                  maxLength: 10,
+                  keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     // prefixText: "+91",
                     contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
@@ -258,6 +266,45 @@ class _AddNewladiesState extends State<AddNewladies> {
                     'OBC',
                     'ST',
                     'SC',
+                  ].map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value,style:TextStyle(color:Colors.black),),
+                    );
+                  }).toList(),
+                  hint:Text(AppTranslations.of(context)!.text("select_category"),
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500),
+                  ),
+                  onChanged: (String? value) {
+                    setState(() {
+                      // _chosenValue = value;
+                    });
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 8.0,top: 8.0),
+                child: Text(AppTranslations.of(context)!.text("cast"), style: style),
+              ),
+
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: DropdownButtonFormField<String>(
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                  ),
+                  isExpanded: true,
+                  focusColor:Colors.white,
+                  // value: _chosenValue,
+                  //elevation: 5,
+                  style: TextStyle(color: Colors.white),
+                  iconEnabledColor:Colors.black,
+                  items: <String>[
+                    'Meena',
+                    'other',
                   ].map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
@@ -324,7 +371,92 @@ class _AddNewladiesState extends State<AddNewladies> {
 
               Padding(
                 padding: const EdgeInsets.only(left: 8.0,top: 8.0),
+                child: Text(AppTranslations.of(context)!.text("are_you_married"), style: style),
+              ),
+
+              Row(
+                children: [
+
+                  Expanded(
+
+                    child: RadioListTile(
+                      title: const Text("Single"),
+                      value: "Single",
+                      groupValue: married,
+                      onChanged: (value){
+                        setState(() {
+                          married = value.toString();
+                        });
+                      },
+                    ),
+                  ),
+
+                  Expanded(
+
+                    child: RadioListTile(
+                      title: const Text("Married"),
+                      value: "Married",
+                      groupValue: married,
+                      onChanged: (value){
+                        setState(() {
+                          married = value.toString();
+                        });
+                      },
+                    ),
+                  ),
+
+                ],
+              ),
+
+
+
+
+              Padding(
+                padding: const EdgeInsets.only(left: 8.0,top: 8.0),
                 child: Text(AppTranslations.of(context)!.text("first_pregnancy"), style: style),
+              ),
+
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: <Widget>[
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Radio(
+                          value: 1,
+                          groupValue: id,
+                          onChanged: (val) {
+                            setState(() {
+                              radioButtonItem = 'YES';
+                              id = 1;
+                            });
+                          },
+                        ),
+                        Text(AppTranslations.of(context)!.text("yes"), style: style),
+
+                        Radio(
+                          value: 2,
+                          groupValue: id,
+                          onChanged: (val) {
+                            setState(() {
+                              radioButtonItem = 'NO';
+                              id = 2;
+                            });
+                          },
+                        ),
+                        Text(AppTranslations.of(context)!.text("no"), style: style),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+
+              Padding(
+                padding: const EdgeInsets.only(left: 8.0,top: 8.0),
+                child: Text(AppTranslations.of(context)!.text("pregnancy_status"), style: style),
               ),
 
               Padding(

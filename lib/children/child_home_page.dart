@@ -60,19 +60,31 @@ class _ChildHomePageState extends State<ChildHomePage> {
 
       list = _dashboard.data!.userAgeRef!;
 
-      for(var item in list) {
+     /* age_ref1 = eng_lang == true ? "(0 - 6 Months)" : "(0 - 6 महीने)";
+     // age_ref1_id = item.id.toString();
+      total_child_1 = AppTranslations.of(context)!.text("total_child");
+
+      age_ref2 = eng_lang == true ? "(6 Month - 3 Years)" : "(6 महीने - 3 वर्ष)";
+     // age_ref2_id = item.id.toString();
+      total_child_2 = AppTranslations.of(context)!.text("total_child");
+
+      age_ref3 = eng_lang == true ? "(3 - 6 Years)" : "(3 - 6 वर्ष)";
+      //age_ref3_id = item.id.toString();
+      total_child_3 = AppTranslations.of(context)!.text("total_child");*/
+
+     for(var item in list) {
         if (item.minAge == 0) {
           age_ref1 = eng_lang == true ? "(0 - 6 Months)" : "(0 - 6 महीने)";
           age_ref1_id = item.id.toString();
-          total_child_1 = item.totalChildren.toString();
-        } else if (item.minAge == 6) {
-          age_ref2 = eng_lang == true ? "(6 Month - 3 Years)" : "(6 महीने - 3 वर्ष)";
+          total_child_1 = AppTranslations.of(context)!.text("total") + " : " +item.totalChildren.toString();
+        } else if (item.minAge == 7) {
+          age_ref2 = eng_lang == true ? "(7 Month - 3 Years)" : "(7 महीने - 3 वर्ष)";
           age_ref2_id = item.id.toString();
-          total_child_2 = item.totalChildren.toString();
-        } else if (item.minAge == 36) {
+          total_child_2 = AppTranslations.of(context)!.text("total") + " : " +item.totalChildren.toString();
+        } else if (item.minAge == 37) {
           age_ref3 = eng_lang == true ? "(3 - 6 Years)" : "(3 - 6 वर्ष)";
           age_ref3_id = item.id.toString();
-          total_child_3 = item.totalChildren.toString();
+          total_child_3 = AppTranslations.of(context)!.text("total") + " : " +item.totalChildren.toString();
         }
       }
 
@@ -149,7 +161,7 @@ class _ChildHomePageState extends State<ChildHomePage> {
 
                                               Padding(
                                                 padding: EdgeInsets.all(8.0),
-                                                child: Text("Total Child : $total_child_1", style: TextStyle(
+                                                child: Text("$total_child_1", style: TextStyle(
                                                     fontSize: 12, color: Colors.black,fontWeight: FontWeight.bold
                                                 )),
                                               ),
@@ -194,7 +206,7 @@ class _ChildHomePageState extends State<ChildHomePage> {
 
                                               Padding(
                                                 padding: EdgeInsets.all(8.0),
-                                                child: Text("Total Child : $total_child_2", style: const TextStyle(
+                                                child: Text("$total_child_2", style: const TextStyle(
                                                     fontSize: 12, color: Colors.black,fontWeight: FontWeight.bold
                                                 )),
                                               ),
@@ -294,7 +306,7 @@ class _ChildHomePageState extends State<ChildHomePage> {
 
                                               Padding(
                                                 padding: EdgeInsets.all(8.0),
-                                                child: Text("Total Child : $total_child_3", style: TextStyle(
+                                                child: Text("$total_child_3", style: TextStyle(
                                                     fontSize: 12, color: Colors.black,fontWeight: FontWeight.bold
                                                 )),
                                               ),

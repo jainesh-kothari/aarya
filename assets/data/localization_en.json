@@ -17,6 +17,7 @@
   "sign_up": " Sign up ",
   "pargent_lady": "Pregnant woman",
   "children": "Children",
+  "children_heading": "Mission Arya : BHIM",
   "new_registration": "New Registration",
   "take_home_rashan": "Take Home Ration(THR)",
   "extra_food": "Additional Food (Supplements)",
@@ -62,15 +63,15 @@
   "category": "Category",
   "select_category": "Please choose a Category",
   "belong_minority":"Do you belong to Religious Minority?",
-  "p_lady_name": "Lady Name",
-  "husband_name": "Husband's Name",
+  "p_lady_name": "Name",
+  "husband_name": "Husband's/ Father's Name",
   "first_pregnancy": " Is this your first pregnancy ?",
   "garbhPath_before": "Has there been a miscarriage before ?",
   "Labhahti_death": "Has the beneficiary deceased ?",
   "pregnancy": "Pregnancy",
   "age": "Age",
   "last_menstruation_cycle": "Last Menstrual Period",
-  "adolescent_girls_and_women": "Adolescent girls and women",
+  "adolescent_girls_and_women": "Mission Arya : Anemia Mukt Dausa",
   "father_occupation": "Father Occupation",
   "select_occupation": "Please select the Occupation",
   "aadhar_number_mother": "Aadhar Number of Mother",
@@ -80,5 +81,18 @@
   "enter_cast": "Enter your Caste",
   "submit": "Submit",
   "verify": "verify",
-  "update_user": "Update Info"
+  "update_user": "Update Info",
+
+  "on_boarding_1": "All at once",
+  "on_boarding_2": "Seek Out",
+  "on_boarding_3": "Keep up with",
+
+  "on_boarding_1_des": "Find all information about children, their mothers and adolescent girls",
+  "on_boarding_2_des": "Know the status of your daily visits and beneficiaries",
+  "on_boarding_3_des": "Medications, vaccinations, and hot meals and breakfasts",
+
+  "total_child": "Child",
+  "total": "Total",
+  "are_you_married": "Marital Status",
+  "pregnancy_status": "Are you pregnant ?"
 }
