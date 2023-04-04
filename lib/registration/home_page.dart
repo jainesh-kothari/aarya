@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'child_dashboard.dart';
 import 'login_screen.dart';
 
 class HomePage extends StatefulWidget {
@@ -167,11 +168,28 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
 
-            ListTile(
-              leading: Icon(Icons.dashboard_outlined), title: Text("DashBoard"),
-              onTap: () {
-                Navigator.pop(context);
-              },
+            ExpansionTile(
+              leading: Icon(Icons.dashboard_outlined),
+              title: Text("DashBoard"),
+
+              children: [
+
+                ListTile(
+                  title: Text("Ladies Dashboard"),
+                  onTap: (){
+                    Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => ChartHomePage()));
+                  },
+                ),
+
+                ListTile(
+                  title: Text("Child Dashboard"),
+                  onTap: (){
+                    Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => ChartHomePage()));
+                  },
+                ),
+
+              ],
+
             ),
             ListTile(
               leading: Icon(Icons.person), title: Text("My Profile"),

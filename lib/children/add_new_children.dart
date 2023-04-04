@@ -29,7 +29,7 @@ class _AddNewChildrenState extends State<AddNewChildren> {
   TextStyle style = const TextStyle(fontSize: 14, color: Colors.black,fontWeight: FontWeight.bold);
   AppConstants api = AppConstants();
 
-  final format = DateFormat("dd-MM-yyyy");
+  final format = DateFormat("MM-dd-yyyy");
   TextEditingController name_controller =  TextEditingController(text:'');
   TextEditingController aadhar_controller =  TextEditingController(text:'');
   TextEditingController number_controller =  TextEditingController(text:'');
@@ -295,9 +295,9 @@ class _AddNewChildrenState extends State<AddNewChildren> {
                                     child: child!,
                                   );
                                 },
-                                firstDate: DateTime(2000),
+                                firstDate: DateTime(1900),
                                 initialDate: currentValue ?? DateTime.now(),
-                                lastDate: DateTime(2100));
+                                lastDate: DateTime.now());
                             return picked;
                           },
                         ),
@@ -640,13 +640,8 @@ class _AddNewChildrenState extends State<AddNewChildren> {
                       InkWell(
                         onTap: () async {
 
-
-
                           if (do_have_aadhar?.toUpperCase() == "YES") {
-                            if (mother_aadhar_controller.text.isEmpty || mother_aadhar_controller.text.length != 12) {
-                              Fluttertoast.showToast(msg: "Please enter the 12 Digit Mother's Aadhaar Number");
-                              return;
-                            } else if (aadhar_controller.text.isEmpty || aadhar_controller.text.length != 12) {
+                            if (aadhar_controller.text.isEmpty || aadhar_controller.text.length != 12) {
                               Fluttertoast.showToast(
                                   msg: "Please enter the 12 Digit  Aadhaar Number");
                               return;
@@ -656,7 +651,9 @@ class _AddNewChildrenState extends State<AddNewChildren> {
                           }
 
 
-                          if (name_controller.text.isEmpty) {
+                          if (mother_aadhar_controller.text.isEmpty) {
+                            Fluttertoast.showToast(msg: "Please enter the 12 Digit Mother's Aadhaar Number");
+                           } else if (name_controller.text.isEmpty) {
                             Fluttertoast.showToast(msg: "Please enter the children Name");
                           } else if (father_controller.text.isEmpty) {
                             Fluttertoast.showToast(msg: "Please enter the Father Name");

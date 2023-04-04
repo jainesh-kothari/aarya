@@ -1,5 +1,6 @@
 
 import 'package:arya/children/add_new_children.dart';
+import 'package:arya/children/child_view_profile.dart';
 import 'package:arya/children/growth_monitaring.dart';
 import 'package:arya/children/nutrition_class.dart';
 import 'package:arya/children/tika_vavaran.dart';
@@ -107,7 +108,7 @@ class _ChildrenListViewCategoryState extends State<ChildrenListViewCategory> {
 
                         return InkWell(
                           onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => UpdateChildren(todo?.id)));
+                            Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => ViewChildrenData(todo?.id)));
                           },
                           child: Card(
                               elevation: 8,
@@ -272,7 +273,7 @@ class _ChildrenListViewCategoryState extends State<ChildrenListViewCategory> {
                     child: TextButton.icon(
 
                       onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => UpdateChildren(id)));
+                        Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => ViewChildrenData(id)));
                       },
                       icon: Icon(
                         Icons.person,color: Colors.black,

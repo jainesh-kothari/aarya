@@ -25,7 +25,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     languagesList[1]: languageCodesList[1],
   };
 
- late SharedPreferences _sharedPreferences;
+  SharedPreferences? _sharedPreferences;
 
   @override
   void initState() {
@@ -43,7 +43,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
         child: _sharedPreferences == null ?
         const Image(image: AssetImage('assets/images/splash_english.jpeg'),fit: BoxFit.fill) :
 
-        _sharedPreferences.getString(AppConstants.SELECTED_LANGUAGE) == "English" ?
+        _sharedPreferences?.getString(AppConstants.SELECTED_LANGUAGE) == "English" ?
         const Image(image: AssetImage('assets/images/splash_english.jpeg'),fit: BoxFit.fill) :
 
         const Image(image: AssetImage('assets/images/splash_hindi.jpeg'),fit: BoxFit.fill),
@@ -59,26 +59,26 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
     setState(() {
 
-    if(_sharedPreferences.getBool(AppConstants.KEY_IS_LOGGEDIN) == null) {
-      _sharedPreferences.setBool(AppConstants.KEY_IS_LOGGEDIN, false);
+    if(_sharedPreferences?.getBool(AppConstants.KEY_IS_LOGGEDIN) == null) {
+      _sharedPreferences?.setBool(AppConstants.KEY_IS_LOGGEDIN, false);
     } else {
       print("=========>>>>>>>>>>");
-      print(_sharedPreferences.getBool(AppConstants.KEY_IS_LOGGEDIN));
+      print(_sharedPreferences?.getBool(AppConstants.KEY_IS_LOGGEDIN));
     }
 
-    if(_sharedPreferences.getString(AppConstants.SELECTED_LANGUAGE) == null) {
-      _sharedPreferences.setString(AppConstants.SELECTED_LANGUAGE, "English");
+    if(_sharedPreferences?.getString(AppConstants.SELECTED_LANGUAGE) == null) {
+      _sharedPreferences?.setString(AppConstants.SELECTED_LANGUAGE, "English");
     }
 
-    print(_sharedPreferences.getString(AppConstants.SELECTED_LANGUAGE));
+    print(_sharedPreferences?.getString(AppConstants.SELECTED_LANGUAGE));
 
     Timer(const Duration(seconds: 2), () => {
 
-          if(_sharedPreferences.getBool(AppConstants.IS_FIRST_TIME_OPEN) == null) {
+          if(_sharedPreferences?.getBool(AppConstants.IS_FIRST_TIME_OPEN) == null) {
             Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => SelectLanguage()))
-          } else if(_sharedPreferences.getBool(AppConstants.IS_FIRST_TIME_OPEN) == false) {
+          } else if(_sharedPreferences?.getBool(AppConstants.IS_FIRST_TIME_OPEN) == false) {
             Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => SelectLanguage()))
-          } else if(_sharedPreferences.getBool(AppConstants.KEY_IS_LOGGEDIN) == true){
+          } else if(_sharedPreferences?.getBool(AppConstants.KEY_IS_LOGGEDIN) == true){
             Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => HomePage()))
           }else {
             Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => LoginScreen()))

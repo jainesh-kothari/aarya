@@ -40,7 +40,7 @@ class _UpdateChildrenState extends State<UpdateChildren> {
   TextStyle style = const TextStyle(fontSize: 14, color: Colors.black,fontWeight: FontWeight.bold);
   AppConstants api = AppConstants();
 
-  final format = DateFormat("dd-MM-yyyy");
+  final format = DateFormat("MM-dd-yyyy");
   TextEditingController name_controller =  TextEditingController(text:'');
   TextEditingController aadhar_controller =  TextEditingController(text:'');
   TextEditingController number_controller =  TextEditingController(text:'');
@@ -85,10 +85,13 @@ class _UpdateChildrenState extends State<UpdateChildren> {
 
     _childData = await ApiService().getSingleChildDetails(userId);
 
-    setState(() async {
+    String date = _childData!.data!.dOB.toString().toString().substring(0,10);
+    var data = format.format(DateTime.parse(date));
+    dob_controller.text = data.toString();
 
-      print(userId);
-      print(_childData!.data.toString());
+    print(data);
+
+    setState(() {
 
       if(_sharedPreferences.getString(AppConstants.SELECTED_LANGUAGE) == "English") {
         eng_lang = true;
@@ -118,67 +121,61 @@ class _UpdateChildrenState extends State<UpdateChildren> {
         ];
       }
 
-      _category_list = ApiService().getCategory();
-      list = (await _category_list)!;
-
-
-
-      String date = _childData!.data!.dOB.toString().toString().substring(0,10);
-
       name_controller.text = _childData!.data!.name.toString();
       aadhar_controller.text = _childData!.data!.aadhar.toString();
       mother_aadhar_controller.text = _childData!.data!.motherAdhar.toString();
       mother_controller.text = _childData!.data!.motherName.toString();
       father_controller.text = _childData!.data!.fatherName.toString();
       number_controller.text = _childData!.data!.mobileNumber.toString();
-      //  dob_controller.text = tempDate.toString();
       _chosenValue = _childData!.data!.fatherOccupation.toString();
       mother_associate = _childData!.data!.motherSelfHelpGroup.toString();
       _chosenCaste = _childData!.data!.cast.toString();
       _chosenCategoryId = _childData!.data!.categoryId.toString();
 
-      _cast_list = ApiService().getCastCategory(_chosenCategoryId.toString(), eng_lang);
-      cast_list = (await _cast_list)!;
+    });
 
-      setState(() {
-        cast_items = cast_list.map((item) {
-          return DropdownMenuItem<CastCategoryDetailsData>(
-            value: item,
-            child: Text(item.name.toString()),
-          );
-        }).toList();
-      });
+    _category_list = ApiService().getCategory();
+    list = (await _category_list)!;
 
+    _cast_list = ApiService().getCastCategory(_chosenCategoryId.toString(), eng_lang);
+    cast_list = (await _cast_list)!;
 
+    setState(() {
+      cast_items = cast_list.map((item) {
+        return DropdownMenuItem<CastCategoryDetailsData>(
+          value: item,
+          child: Text(item.name.toString()),
+        );
+      }).toList();
+    });
 
-      setState(() {
+    setState(() {
 
-        for (var i = 0; i < list.length; i++) {
+      for (var i = 0; i < list.length; i++) {
 
-          if(list[i].id.toString() == _childData!.data!.categoryId.toString()) {
-            _chosenCategoryName = list[i].name.toString();
-          }
+        if(list[i].id.toString() == _childData!.data!.categoryId.toString()) {
+          _chosenCategoryName = list[i].name.toString();
         }
+      }
+
+      gender = _childData!.data!.gender.toString();
+
+      if(_childData!.data!.hasAadhar == true) {
+        do_have_aadhar = "Yes";
+      } else {
+        do_have_aadhar = "No";
+      }
+
+      if(_childData!.data!.isReligiousMinority == true) {
+        minority = "Yes";
+      } else {
+        minority = "No";
+      }
+    });
 
 
-        dob_controller.text = date;
-        gender = _childData!.data!.gender.toString();
-
-        if(_childData!.data!.hasAadhar == true) {
-          do_have_aadhar = "Yes";
-        } else {
-          do_have_aadhar = "No";
-        }
-
-        if(_childData!.data!.isReligiousMinority == true) {
-          minority = "Yes";
-        } else {
-          minority = "No";
-        }
-      });
-
+    setState(()  {
       visible =false;
-
     });
   }
 
@@ -388,9 +385,9 @@ class _UpdateChildrenState extends State<UpdateChildren> {
                                     child: child!,
                                   );
                                 },
-                                firstDate: DateTime(2000),
-                                initialDate: currentValue ?? DateTime.now(),
-                                lastDate: DateTime(2100));
+                                firstDate: DateTime(1900),
+                                initialDate: DateTime(1960),
+                                lastDate: DateTime.now());
                             return picked;
                           },
                         ),

@@ -24,10 +24,14 @@ class _GrowthMonitoringState extends State<GrowthMonitoring> {
   _GrowthMonitoringState(this.userId);
 
   var now = new DateTime.now();
-  final format = DateFormat("dd-MM-yyyy");
+  final format = DateFormat("MM-dd-yyyy");
   TextEditingController date_controller = TextEditingController(text:'');
   TextEditingController height_controller = TextEditingController(text:'');
   TextEditingController weight_controller = TextEditingController(text:'');
+
+  String prv_height = "";
+  String prv_weight ="";
+  String prv_date = "";
 
   final List<Feature> features = [
     Feature(
@@ -86,7 +90,7 @@ class _GrowthMonitoringState extends State<GrowthMonitoring> {
 
                   Padding(
                     padding: const EdgeInsets.only(left: 12.0,top: 8.0),
-                    child: Text(AppTranslations.of(context)!.text("pervious_reading"), style: const TextStyle(
+                    child: Text(AppTranslations.of(context)!.text("pervious_reading") + " : "+ prv_date, style: const TextStyle(
                         fontSize: 13, color: Colors.grey,fontWeight: FontWeight.bold
                     )),
                   ),
@@ -105,7 +109,7 @@ class _GrowthMonitoringState extends State<GrowthMonitoring> {
                               fontSize: 11, color: Colors.grey
                           )),
 
-                          Text("Not Available", style: TextStyle(
+                          Text(prv_height.isEmpty ? "Not Available" : prv_height, style: TextStyle(
                               fontSize: 11, color: Colors.grey
                           )),
                         ],
@@ -126,7 +130,7 @@ class _GrowthMonitoringState extends State<GrowthMonitoring> {
                               fontSize: 11, color: Colors.grey
                           )),
 
-                          Text("Not Available", style: TextStyle(
+                          Text(prv_weight.isEmpty ? "Not Available" : prv_weight, style: TextStyle(
                               fontSize: 11, color: Colors.grey
                           )),
                         ],
@@ -302,6 +306,11 @@ class _GrowthMonitoringState extends State<GrowthMonitoring> {
                                   }
 
                                   setState(() {
+
+                                    prv_date = date_controller.text;
+                                    prv_height = height_controller.text;
+                                    prv_weight = weight_controller.text;
+
                                     weight_controller.text = "";
                                     date_controller.text = "";
                                     height_controller.text = "";
