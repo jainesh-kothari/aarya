@@ -1,27 +1,13 @@
 
-import 'dart:io';
-
 import 'package:arya/children/update_child_data.dart';
-import 'package:arya/language/app_translations.dart';
-import 'package:arya/model/get_child_gs.dart';
 import 'package:arya/model/particular_child_data_gs.dart';
-import 'package:arya/ladies/list_view.dart';
 import 'package:arya/util/appcontants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
-import 'package:rflutter_alert/rflutter_alert.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 import '../libary/api_service.dart';
-import '../libary/util.dart';
 import '../model/caste_category.dart';
-import '../model/category_of_cast.dart';
-import '../model/login_gs.dart';
-import 'children_listview.dart';
+
 
 class ViewChildrenData extends StatefulWidget {
 
@@ -128,8 +114,8 @@ class _ViewChildrenDataState extends State<ViewChildrenData> {
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(statusBarColor: Color(AppConstants.BLUE_COLOR[0])));
 
-    TextStyle style1 = TextStyle(fontSize: 14,fontWeight: FontWeight.bold,color: Colors.black);
-    TextStyle style2 = TextStyle(fontSize: 14,fontWeight: FontWeight.bold,color: Colors.grey);
+    TextStyle style1 = const TextStyle(fontSize: 14,fontWeight: FontWeight.bold,color: Colors.black);
+    TextStyle style2 = const TextStyle(fontSize: 14,fontWeight: FontWeight.bold,color: Colors.grey);
 
     return Scaffold(
       appBar: AppBar(

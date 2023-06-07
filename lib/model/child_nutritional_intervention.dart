@@ -1,9 +1,9 @@
-class Vaccination {
+class ChildNutritionalIntervention {
   Data? data;
 
-  Vaccination({this.data});
+  ChildNutritionalIntervention({this.data});
 
-  Vaccination.fromJson(Map<String, dynamic> json) {
+  ChildNutritionalIntervention.fromJson(Map<String, dynamic> json) {
     data = json['data'] != null ? new Data.fromJson(json['data']) : null;
   }
 
@@ -17,38 +17,38 @@ class Vaccination {
 }
 
 class Data {
-  List<VaccinationReference>? vaccinationReference;
+  List<FoodReference>? foodReference;
 
-  Data({this.vaccinationReference});
+  Data({this.foodReference});
 
   Data.fromJson(Map<String, dynamic> json) {
-    if (json['vaccinationReference'] != null) {
-      vaccinationReference = <VaccinationReference>[];
-      json['vaccinationReference'].forEach((v) {
-        vaccinationReference!.add(new VaccinationReference.fromJson(v));
+    if (json['foodReference'] != null) {
+      foodReference = <FoodReference>[];
+      json['foodReference'].forEach((v) {
+        foodReference!.add(new FoodReference.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.vaccinationReference != null) {
-      data['vaccinationReference'] =
-          this.vaccinationReference!.map((v) => v.toJson()).toList();
+    if (this.foodReference != null) {
+      data['foodReference'] =
+          this.foodReference!.map((v) => v.toJson()).toList();
     }
     return data;
   }
 }
 
-class VaccinationReference {
+class FoodReference {
   String? id;
   String? name;
   String? hiName;
   bool? isActive;
 
-  VaccinationReference({this.id, this.name, this.hiName, this.isActive});
+  FoodReference({this.id, this.name, this.hiName, this.isActive});
 
-  VaccinationReference.fromJson(Map<String, dynamic> json) {
+  FoodReference.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     hiName = json['hiName'];

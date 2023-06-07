@@ -181,9 +181,8 @@ class _LoginScreenState extends State<StatefulWidget> {
 
                              String? number = number_controller.text;
 
-
                              _loginResponse = await ApiService().getLoginDetails(number, mPin)!;
-                             //  _loginResponse = await ApiService().getLoginDetails("9929798180", "1234")!;
+                            //  _loginResponse = await ApiService().getLoginDetails("9998882222", "2222")!;
                              //_loginResponse = await ApiService().getLoginDetails("7014737142", "1234")!;
 
                             if(_loginResponse!=null) {
@@ -191,6 +190,13 @@ class _LoginScreenState extends State<StatefulWidget> {
                               _sharedPreferences.setBool(AppConstants.IS_ARYA, _loginResponse!.data!.user!.isArya!);
                               _sharedPreferences.setBool(AppConstants.IS_GNM, _loginResponse!.data!.user!.isGnm!);
                               _sharedPreferences.setString(AppConstants.TOKEN, _loginResponse!.data!.token.toString());
+
+                              var name = _loginResponse!.data!.user!.firstName.toString() + " " + _loginResponse!.data!.user!.middleName.toString() + " " + _loginResponse!.data!.user!.lastName.toString();
+
+                              _sharedPreferences.setString(AppConstants.NAME, name);
+                              _sharedPreferences.setString(AppConstants.USER_MOBILE_NUMBER, _loginResponse!.data!.user!.mobile.toString());
+                              _sharedPreferences.setString(AppConstants.EMAIL, _loginResponse!.data!.user!.email.toString());
+                             // _sharedPreferences.setString(AppConstants.ADDRESS, _loginResponse!.data!.user!.add.toString());
 
                               Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => HomePage()));
 

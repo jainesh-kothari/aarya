@@ -1,10 +1,12 @@
-class Vaccination {
+class VaccinationModel {
   Data? data;
+  String? message;
 
-  Vaccination({this.data});
+  VaccinationModel({this.data, this.message});
 
-  Vaccination.fromJson(Map<String, dynamic> json) {
+  VaccinationModel.fromJson(Map<String, dynamic> json) {
     data = json['data'] != null ? new Data.fromJson(json['data']) : null;
+    message = json['message'];
   }
 
   Map<String, dynamic> toJson() {
@@ -12,43 +14,45 @@ class Vaccination {
     if (this.data != null) {
       data['data'] = this.data!.toJson();
     }
+    data['message'] = this.message;
     return data;
   }
 }
 
 class Data {
-  List<VaccinationReference>? vaccinationReference;
+  List<WomenVaccinationReference>? womenVaccinationReference;
 
-  Data({this.vaccinationReference});
+  Data({this.womenVaccinationReference});
 
   Data.fromJson(Map<String, dynamic> json) {
-    if (json['vaccinationReference'] != null) {
-      vaccinationReference = <VaccinationReference>[];
-      json['vaccinationReference'].forEach((v) {
-        vaccinationReference!.add(new VaccinationReference.fromJson(v));
+    if (json['WomenVaccinationReference'] != null) {
+      womenVaccinationReference = <WomenVaccinationReference>[];
+      json['WomenVaccinationReference'].forEach((v) {
+        womenVaccinationReference!
+            .add(new WomenVaccinationReference.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.vaccinationReference != null) {
-      data['vaccinationReference'] =
-          this.vaccinationReference!.map((v) => v.toJson()).toList();
+    if (this.womenVaccinationReference != null) {
+      data['WomenVaccinationReference'] =
+          this.womenVaccinationReference!.map((v) => v.toJson()).toList();
     }
     return data;
   }
 }
 
-class VaccinationReference {
+class WomenVaccinationReference {
   String? id;
   String? name;
   String? hiName;
   bool? isActive;
 
-  VaccinationReference({this.id, this.name, this.hiName, this.isActive});
+  WomenVaccinationReference({this.id, this.name, this.hiName, this.isActive});
 
-  VaccinationReference.fromJson(Map<String, dynamic> json) {
+  WomenVaccinationReference.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     hiName = json['hiName'];

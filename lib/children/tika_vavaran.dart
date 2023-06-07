@@ -6,12 +6,18 @@ import '../language/app_translations.dart';
 import '../libary/api_service.dart';
 
 class TikaVivaran extends StatefulWidget {
+
+  String user_id;
+  TikaVivaran(this.user_id);
+
   @override
-  _TikaVivaranState createState() => _TikaVivaranState();
+  _TikaVivaranState createState() => _TikaVivaranState(this.user_id);
 }
 
 class _TikaVivaranState extends State<TikaVivaran> {
 
+  String? user_id;
+  _TikaVivaranState(this.user_id);
 
   late Future<List<VaccinationReference>?> _vaccination_list;
   late List<bool> _isChecked;
@@ -22,7 +28,7 @@ class _TikaVivaranState extends State<TikaVivaran> {
   void initState() {
     super.initState();
 
-    _vaccination_list = ApiService().getVaccinationList("");
+    _vaccination_list = ApiService().getVaccinationList(user_id.toString());
 
     _vaccination_list.then((value) => {
     _isChecked = List<bool>.filled(value!.length, false)

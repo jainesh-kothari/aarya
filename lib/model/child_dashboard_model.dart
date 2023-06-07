@@ -1,10 +1,10 @@
-class ChildDashBoardDetils {
+class ChildDashBoardData {
   Data? data;
   String? message;
 
-  ChildDashBoardDetils({this.data, this.message});
+  ChildDashBoardData({this.data, this.message});
 
-  ChildDashBoardDetils.fromJson(Map<String, dynamic> json) {
+  ChildDashBoardData.fromJson(Map<String, dynamic> json) {
     data = json['data'] != null ? new Data.fromJson(json['data']) : null;
     message = json['message'];
   }
@@ -32,7 +32,7 @@ class Data {
   List<UserAccess>? userAccess;
   bool? isArya;
   bool? isGnm;
-  List<UserAgeRef>? userAgeRef;
+  List<ChildDashBoardUserAgeRef>? userAgeRef;
 
   Data(
       {this.id,
@@ -73,9 +73,9 @@ class Data {
     isArya = json['is_arya'];
     isGnm = json['is_gnm'];
     if (json['userAgeRef'] != null) {
-      userAgeRef = <UserAgeRef>[];
+      userAgeRef = <ChildDashBoardUserAgeRef>[];
       json['userAgeRef'].forEach((v) {
-        userAgeRef!.add(new UserAgeRef.fromJson(v));
+        userAgeRef!.add(new ChildDashBoardUserAgeRef.fromJson(v));
       });
     }
   }
@@ -125,13 +125,13 @@ class Roles {
 }
 
 class UserAccess {
-  UserCenter? center;
+  CenterBoard? center;
 
   UserAccess({this.center});
 
   UserAccess.fromJson(Map<String, dynamic> json) {
     center =
-    json['center'] != null ? new UserCenter.fromJson(json['center']) : null;
+    json['center'] != null ? new CenterBoard.fromJson(json['center']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -143,14 +143,14 @@ class UserAccess {
   }
 }
 
-class UserCenter {
+class CenterBoard {
   String? id;
   String? name;
   List<String>? ageReferenceIDs;
 
-  UserCenter({this.id, this.name, this.ageReferenceIDs});
+  CenterBoard({this.id, this.name, this.ageReferenceIDs});
 
-  UserCenter.fromJson(Map<String, dynamic> json) {
+  CenterBoard.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     ageReferenceIDs = json['ageReferenceIDs'].cast<String>();
@@ -165,7 +165,7 @@ class UserCenter {
   }
 }
 
-class UserAgeRef {
+class ChildDashBoardUserAgeRef {
   String? id;
   String? name;
   int? minAge;
@@ -175,22 +175,25 @@ class UserAgeRef {
   int? medium;
   int? low;
 
-
-  UserAgeRef(
-      {this.id, this.name, this.minAge, this.maxAge, this.totalChildren,
-        this.low,
+  ChildDashBoardUserAgeRef(
+      {this.id,
+        this.name,
+        this.minAge,
+        this.maxAge,
+        this.totalChildren,
         this.normal,
-        this.medium});
+        this.medium,
+        this.low});
 
-  UserAgeRef.fromJson(Map<String, dynamic> json) {
+  ChildDashBoardUserAgeRef.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     minAge = json['minAge'];
     maxAge = json['maxAge'];
     totalChildren = json['totalChildren'];
-    low = json['Low'];
-    medium = json['Medium'];
     normal = json['Normal'];
+    medium = json['Medium'];
+    low = json['Low'];
   }
 
   Map<String, dynamic> toJson() {
@@ -200,9 +203,9 @@ class UserAgeRef {
     data['minAge'] = this.minAge;
     data['maxAge'] = this.maxAge;
     data['totalChildren'] = this.totalChildren;
-    data['Low'] = this.low;
-    data['Medium'] = this.medium;
     data['Normal'] = this.normal;
+    data['Medium'] = this.medium;
+    data['Low'] = this.low;
     return data;
   }
 }

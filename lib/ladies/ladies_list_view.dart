@@ -1,54 +1,52 @@
 
-import 'package:arya/children/add_new_children.dart';
-import 'package:arya/children/child_view_profile.dart';
-import 'package:arya/children/growth_monitaring.dart';
-import 'package:arya/children/nutrition_class.dart';
 import 'package:arya/children/tika_vavaran.dart';
-import 'package:arya/children/update_child_data.dart';
+import 'package:arya/ladies/add_new_lady.dart';
+import 'package:arya/ladies/lady_nutrition_process.dart';
+import 'package:arya/ladies/lady_vaccination.dart';
+import 'package:arya/ladies/suckle_lady.dart';
+import 'package:arya/ladies/update_lady_profile.dart';
 import 'package:arya/language/app_translations.dart';
 import 'package:arya/libary/api_service.dart';
-import 'package:arya/model/child_category_gs.dart';
+import 'package:arya/model/ladies_list_model.dart';
 import 'package:arya/util/appcontants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 import '../model/get_child_gs.dart';
+import 'ladiesviewdata.dart';
 
-class ChildrenListViewCategory extends StatefulWidget {
-
-  String? userId;
-  ChildrenListViewCategory(this.userId);
+class LadiesListview extends StatefulWidget {
+  String id;
+  bool flag;
+  LadiesListview(this.id, this.flag);
 
   @override
-  _ChildrenListViewCategoryState createState() => _ChildrenListViewCategoryState(this.userId);
+  _LadiesListviewState createState() => new _LadiesListviewState(this.id, this.flag);
 }
 
-class _ChildrenListViewCategoryState extends State<ChildrenListViewCategory> {
+class _LadiesListviewState extends State<LadiesListview> {
 
-
-  String? userId;
-  _ChildrenListViewCategoryState(this.userId);
-
+  String refid;
+  bool flag;
+  _LadiesListviewState(this.refid,this.flag);
 
   AppConstants api = AppConstants();
 
-  late Future<List<ChildCategoryData>?> _child_list;
+  late Future<List<LadiesListviewModelData>?> _women_list;
+
 
   @override
   void initState() {
     super.initState();
-    _getData();
-  }
-
-  _getData() async {
-    _child_list = ApiService().getChildListCategory(userId.toString());
+    _women_list = ApiService().getWomenList(refid);
+    print(refid);
   }
 
 
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(statusBarColor: Color(AppConstants.BLUE_COLOR[0])));
-
     return Scaffold(
 
       appBar: AppBar(
@@ -65,33 +63,31 @@ class _ChildrenListViewCategoryState extends State<ChildrenListViewCategory> {
           child: Column(children: [
 
             Expanded(
-              child: FutureBuilder<List<ChildCategoryData>?>(
-                future: _child_list,
+              child: FutureBuilder<List<LadiesListviewModelData>?>(
+                future: _women_list,
                 builder: (context, snapshot) {
-
-                  print(snapshot.hasData);
 
                   if(snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: CircularProgressIndicator());
                   }
 
                   if(!snapshot.hasData) {
-                    return const Center(child: Text("No Child Found"));
+                    return const Center(child: Text("No Ladies Found"));
                   }
 
-                  return ListView.separated(
-                      shrinkWrap: true,
-                      itemBuilder: (context,index) {
-                        int itemCount = snapshot.data?.length ?? 0;
-                        int reversedIndex = itemCount - 1 - index;
-                        var todo = snapshot.data?[reversedIndex];
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ListView.separated(
+                        shrinkWrap: true,
+                        itemBuilder: (context,index) {
+                          int itemCount = snapshot.data?.length ?? 0;
+                          int reversedIndex = itemCount - 1 - index;
+                          var todo = snapshot.data?[reversedIndex];
 
-                        return InkWell(
-                          onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => ViewChildrenData(todo?.id)));
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
+                          return InkWell(
+                            onTap: () {
+                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ViewLadiesData(todo, refid)));
+                            },
                             child: Card(
                                 elevation: 8,
                                 shadowColor: Colors.blueAccent,
@@ -111,7 +107,8 @@ class _ChildrenListViewCategoryState extends State<ChildrenListViewCategory> {
                                           const SizedBox(height: 5),
 
                                           ListTile(
-                                            leading: Image.asset('assets/images/child_icon.jpg',height: 40,),
+                                            leading: Image.asset('assets/images/lady_iocn.png',height: 40,),
+
                                             title: Padding(
                                                 padding: const EdgeInsets.all(3.0),
                                                 child:  RichText(
@@ -132,7 +129,8 @@ class _ChildrenListViewCategoryState extends State<ChildrenListViewCategory> {
                                                 color: Colors.black,
                                               ),
                                               onPressed: () {
-                                                showBottomSheetOnClick(context, todo!.name, todo!.fatherName,  todo!.id, todo!.mobileNumber.toString());
+                                                //showBottomSheetOnClick(context, todo!.name, todo!.husbandName,  todo!.id, todo!.mobileNumber.toString());
+                                                showBottomSheetOnClick(context, todo!, refid);
                                               },
                                             ),
 
@@ -145,13 +143,11 @@ class _ChildrenListViewCategoryState extends State<ChildrenListViewCategory> {
 
                                                   RichText(
                                                     text: TextSpan(
-                                                      text: "Mobile Number ",
+                                                      text: AppTranslations.of(context)!.text("mobile_number"),
                                                       style: DefaultTextStyle.of(context).style,
                                                       children: <TextSpan>[
-
                                                         const TextSpan(text: " : "),
-                                                        TextSpan(text: todo?.mobileNumber!.toString()),
-                                                        TextSpan(text: ' '),
+                                                        TextSpan(text: todo?.mobileNumber.toString()),
                                                       ],
                                                     ),
                                                   ),
@@ -163,11 +159,11 @@ class _ChildrenListViewCategoryState extends State<ChildrenListViewCategory> {
 
                                                   RichText(
                                                     text: TextSpan(
-                                                      text: AppTranslations.of(context)!.text("gender"),
+                                                      text: AppTranslations.of(context)!.text("svastha_id"),
                                                       style: DefaultTextStyle.of(context).style,
                                                       children: <TextSpan>[
                                                         const TextSpan(text: " : "),
-                                                        TextSpan(text: todo?.gender),
+                                                        TextSpan(text: todo?.svasthaId),
                                                       ],
                                                     ),
                                                   ),
@@ -184,7 +180,7 @@ class _ChildrenListViewCategoryState extends State<ChildrenListViewCategory> {
                                       bottom:0,
                                       child: Container(
                                         width: 60,
-                                        color: todo!.isVerified != true ?  Colors.green : Colors.red,
+                                        color: Colors.green,
                                         child: const Padding(
                                           padding: EdgeInsets.all(3.0),
                                           child: Text("  Verified", style: TextStyle(
@@ -195,21 +191,21 @@ class _ChildrenListViewCategoryState extends State<ChildrenListViewCategory> {
                                     ),
                                   ],
                                 )),
-                          ),
-                        );
-                      },
-                      separatorBuilder: (context,index) {
-                        return Container();
-                      },
-                      itemCount: snapshot.data?.length ?? 0);
-                },
+                          );
+                        },
+                        separatorBuilder: (context,index) {
+                          return Container();
+                        },
+                        itemCount: snapshot.data?.length ?? 0),
+                  );
+              },
               ),
             ),
           ])),
 
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => AddNewChildren()));
+          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => AddNewladies(refid)));
         },
         backgroundColor: Colors.blue,
         child: const Icon(Icons.add),
@@ -217,7 +213,13 @@ class _ChildrenListViewCategoryState extends State<ChildrenListViewCategory> {
     );
   }
 
-  showBottomSheetOnClick(BuildContext context, String? name, String? fatherName, String? id, String? number) {
+
+  showBottomSheetOnClick(BuildContext context, LadiesListviewModelData todo, String refid) {
+
+    String name = todo!.name.toString();
+    String husbandName = todo!.husbandName.toString();
+    String mobileNumber = todo!.mobileNumber.toString();
+
     return showModalBottomSheet(
         context: context,
         shape: const RoundedRectangleBorder( // <-- SEE HERE
@@ -235,11 +237,11 @@ class _ChildrenListViewCategoryState extends State<ChildrenListViewCategory> {
 
                 SizedBox(height: 40),
 
-                Center(child: Text("$name S/o $fatherName",style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18,color: Colors.black))),
+                Center(child: Text("$name S/o $husbandName",style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 18,color: Colors.black))),
 
                 SizedBox(height: 5),
 
-                Center(child: Text("$number",style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16,color: Colors.black))),
+                Center(child: Text("$mobileNumber", style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16,color: Colors.black))),
 
                 SizedBox(height: 5),
 
@@ -252,7 +254,13 @@ class _ChildrenListViewCategoryState extends State<ChildrenListViewCategory> {
                     child: TextButton.icon(
 
                       onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => ViewChildrenData(id)));
+                        Navigator.pop(context);
+
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateNewladies(todo, refid))).then((_) {
+                          setState(() {
+                            _women_list = ApiService().getWomenList(refid);
+                          });
+                        });
                       },
                       icon: Icon(
                         Icons.person,color: Colors.black,
@@ -266,20 +274,24 @@ class _ChildrenListViewCategoryState extends State<ChildrenListViewCategory> {
 
                 SizedBox(height: 5),
 
-                Padding(
-                  padding: const EdgeInsets.only(left: 13.0, top: 3.0),
-                  child: SizedBox(
-                    height: 40,
-                    child: TextButton.icon(
-                      onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => GrowthMonitoring(id)));
-                      },
-                      icon: Icon(
-                        Icons.stacked_line_chart,color: Colors.black,
-                        size: 22.0,
+                Visibility(
+                  visible: flag,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 13.0, top: 3.0),
+                    child: SizedBox(
+                      height: 40,
+                      child: TextButton.icon(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => SuckleLady(todo.id)));
+                        },
+                        icon: const Icon(
+                          Icons.stacked_line_chart,color: Colors.black,
+                          size: 22.0,
+                        ),
+                        label: Text(AppTranslations.of(context)!.text ("stanpan_karne_wali_ma"),
+                            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 18,color: Colors.black)),
                       ),
-                      label: Text(AppTranslations.of(context)!.text ("growth_monitaring"),
-                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18,color: Colors.black)),
                     ),
                   ),
                 ),
@@ -292,7 +304,7 @@ class _ChildrenListViewCategoryState extends State<ChildrenListViewCategory> {
                     height: 40,
                     child: TextButton.icon(
                       onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => NutritionProcess(id!)));
+                        Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => LadyNutritionProcess(todo.id.toString())));
                       },
                       icon: Icon(
                         Icons.info, color: Colors.black,
@@ -313,7 +325,7 @@ class _ChildrenListViewCategoryState extends State<ChildrenListViewCategory> {
                     height: 40,
                     child: TextButton.icon(
                       onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => TikaVivaran(id!)));
+                        Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => LadyVaccination(todo.id.toString())));
                       },
                       icon: Icon(
                         Icons.vaccines,color: Colors.black,
@@ -329,5 +341,4 @@ class _ChildrenListViewCategoryState extends State<ChildrenListViewCategory> {
           );
         });
   }
-
 }

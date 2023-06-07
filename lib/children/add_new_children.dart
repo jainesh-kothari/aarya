@@ -5,7 +5,6 @@ import 'package:arya/util/appcontants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
@@ -16,7 +15,7 @@ import '../libary/util.dart';
 import '../model/caste_category.dart';
 import '../model/category_of_cast.dart';
 import '../model/login_gs.dart';
-import 'children_listview.dart';
+
 
 class AddNewChildren extends StatefulWidget {
   @override
@@ -124,22 +123,6 @@ class _AddNewChildrenState extends State<AddNewChildren> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-
-                      Visibility(
-                        visible: false,
-                        child: Center(
-                          child: InkWell(
-                            onTap: () {
-                              _pickImage();
-                            },
-                            child: Container(
-                                decoration: BoxDecoration(borderRadius: BorderRadius.circular(45.0)),
-                                child: Image.asset('assets/images/profile_icon.png')
-                            ),
-                          ),
-                        ),
-                      ),
-
 
                       Padding(
                           padding: EdgeInsets.only(left: 8.0,top: 8.0),
@@ -686,6 +669,7 @@ class _AddNewChildrenState extends State<AddNewChildren> {
                                 mother_controller.text, number_controller.text, mother_associate.toString(),
                                 gender.toString(),_chosenValue.toString(),minority.toString(),_chosenCategory.id.toString(), _chosenCaste.toString());
 
+
                             setState(() {
                               visible = false;
                             });
@@ -714,11 +698,8 @@ class _AddNewChildrenState extends State<AddNewChildren> {
                                 ],
                               ).show();
                             } else {
-                              Fluttertoast.showToast(msg: "Something went wrong");
+                              Fluttertoast.showToast(msg: "$_loginResponse");
                             }
-
-                            print(_loginResponse);
-
                           }
                         },
                         child: Padding(
@@ -765,62 +746,5 @@ class _AddNewChildrenState extends State<AddNewChildren> {
         ),
       ),
     );
-  }
-
-  void _pickImage() async {
-    final imageSource = await showDialog<ImageSource>(
-        context: context,
-        builder: (context) => SimpleDialog(
-            title: Text(AppTranslations.of(context)!.text("add_photos")),
-
-            children: <Widget>[
-              SimpleDialogOption(
-                onPressed: () {
-                  Navigator.pop(context, ImageSource.camera);
-                },
-                child: const Text('Take photo'),
-              ),
-              SimpleDialogOption(
-                onPressed: () {
-                  Navigator.pop(context, ImageSource.gallery);
-                },
-                child: const Text('Choose from Gallery'),
-              ),
-            ]
-        ));
-  }
-
-
-  _getFromGallery() async {
-    XFile? pickedFile = await ImagePicker().pickImage(
-      source: ImageSource.gallery,
-      maxWidth: 400,
-      maxHeight: 400,
-    );
-    if (pickedFile != null) {
-      setState(() {
-        imageFile = File(pickedFile.path);
-      });
-    }
-  }
-
-  /// Get from Camera
-  _getFromCamera() async {
-    XFile? pickedFile = await ImagePicker().pickImage(
-      source: ImageSource.camera,
-      maxWidth: 400,
-      maxHeight: 400,
-    );
-    if (pickedFile != null) {
-      setState(() {
-        imageFile = File(pickedFile.path);
-      });
-    }
-  }
-
-
-
-  _getCategoryDetails(String name) async {
-
   }
 }

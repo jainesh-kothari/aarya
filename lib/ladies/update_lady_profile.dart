@@ -1,7 +1,9 @@
 import 'package:arya/ladies/add_new_lady_response.dart';
+import 'package:arya/ladies/ladies_list_view.dart';
 import 'package:arya/language/app_translations.dart';
 import 'package:arya/model/caste_category.dart';
 import 'package:arya/model/category_of_cast.dart';
+import 'package:arya/model/ladies_list_model.dart';
 import 'package:arya/util/appcontants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -15,19 +17,21 @@ import '../libary/api_service.dart';
 import '../libary/util.dart';
 import '../model/login_gs.dart';
 
-class AddNewladies extends StatefulWidget {
+class UpdateNewladies extends StatefulWidget {
 
+  LadiesListviewModelData? user_details;
   String refid;
-  AddNewladies(this.refid);
+  UpdateNewladies(this.user_details, this.refid);
 
   @override
-  _AddNewladiesState createState() => new _AddNewladiesState(this.refid);
+  _UpdateNewladiesState createState() => _UpdateNewladiesState(this.user_details, this.refid);
 }
 
-class _AddNewladiesState extends State<AddNewladies> {
+class _UpdateNewladiesState extends State<UpdateNewladies> {
 
-  String refid;
-  _AddNewladiesState(this.refid);
+  LadiesListviewModelData? user_details;
+   String refid;
+  _UpdateNewladiesState(this.user_details, this.refid);
 
   TextStyle style = const TextStyle(fontSize: 14, color: Colors.black,fontWeight: FontWeight.bold);
   AppConstants api = AppConstants();
@@ -43,6 +47,8 @@ class _AddNewladiesState extends State<AddNewladies> {
   String _chosenCategoryName ="";
   String? _chosenCaste;
   String? _chosenCasteId;
+
+
 
 
   final GlobalKey<FormFieldState> _key_dropdown = GlobalKey<FormFieldState>();
@@ -67,7 +73,6 @@ class _AddNewladiesState extends State<AddNewladies> {
   late CastCategoryData _chosenCategory;
   var cast_items;
   bool eng_lang= false;
-  bool married_visible = false;
   bool visible = false;
 
   _getDetails() async {
@@ -81,12 +86,53 @@ class _AddNewladiesState extends State<AddNewladies> {
 
     _category_list = ApiService().getCategory();
     list = (await _category_list)!;
+
+
+    setState(() {
+      for (var i = 0; i < list.length; i++) {
+        _chosenCategory = list[i];
+        if(list[i].id.toString() == user_details!.categoryId.toString()) {
+          _chosenCategoryName = list[i].name.toString();
+        }
+      }
+    });
   }
 
   @override
   void initState() {
     super.initState();
     _getDetails();
+
+    setState(() {
+      name_controller.text = user_details!.name.toString();
+      aadhar_controller.text = user_details!.aadhar.toString();
+      number_controller.text = user_details!.mobileNumber.toString();
+      husband_controller.text = user_details!.husbandName.toString();
+      swastha_controller.text = user_details!.svasthaId.toString();
+
+      time_controller.text = user_details!.lastMenstrulPeriod.toString();
+      _chosenCaste = user_details!.cast.toString();
+      // _chosenCategoryId = user_details!.categoryId.toString();
+
+      String date = user_details!.dOB.toString().toString().substring(0,10);
+      var data = format.format(DateTime.parse(date));
+      dob_controller.text = data.toString();
+      married = user_details!.maritalStatus.toString();
+
+      bool? is_minority = user_details!.isReligiousMinority;
+      bool? is_first_pregnancy = user_details!.isFirstPregnancy;
+      bool? is_pregnant = user_details!.areYouPregnant;
+      bool? is_misscarraiage = user_details!.isAbortionBefore;
+      bool? isbanficary = user_details!.isBeneficiary;
+
+      minority = is_minority == true ? "Yes" : "No";
+      first_pregnancy = is_first_pregnancy == true ? "Yes" : "No";
+      pregnant = is_pregnant == true ? "Yes" : "No";
+      miscarriage = is_misscarraiage == true ? "Yes" : "No";
+      decceased = isbanficary == true ? "Yes" : "No";
+
+    });
+
   }
 
   @override
@@ -249,7 +295,7 @@ class _AddNewladiesState extends State<AddNewladies> {
                                   child: child!,
                                 );
                               },
-                              firstDate: DateTime(1900),
+                              firstDate: DateTime(2000),
                               initialDate: currentValue ?? DateTime.now(),
                               lastDate: DateTime.now());
                           return picked;
@@ -298,7 +344,6 @@ class _AddNewladiesState extends State<AddNewladies> {
                             onChanged: (value){
                               setState(() {
                                 married = value.toString();
-                                married_visible = false;
                               });
                             },
                           ),
@@ -313,7 +358,6 @@ class _AddNewladiesState extends State<AddNewladies> {
                             onChanged: (value){
                               setState(() {
                                 married = value.toString();
-                                married_visible =true;
                               });
                             },
                           ),
@@ -342,7 +386,7 @@ class _AddNewladiesState extends State<AddNewladies> {
                         style: const TextStyle(color: Colors.black),
                         iconEnabledColor:Colors.black,
                         items: items,
-                        hint:Text(AppTranslations.of(context)!.text("select_category"),
+                        hint:Text(_chosenCategoryName,
                           style: const TextStyle(
                               color: Colors.black,
                               fontSize: 14,
@@ -404,7 +448,7 @@ class _AddNewladiesState extends State<AddNewladies> {
                           style: const TextStyle(color: Colors.black),
                           iconEnabledColor:Colors.black,
 
-                          hint:Text(AppTranslations.of(context)!.text("select_cast"),
+                          hint:Text(_chosenCaste!,
                             style: const TextStyle(
                                 color: Colors.black,
                                 fontSize: 14,
@@ -466,169 +510,169 @@ class _AddNewladiesState extends State<AddNewladies> {
 
 
 
-                  Visibility(
-                    visible: married_visible,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8.0,top: 8.0),
-                        child: Text(AppTranslations.of(context)!.text("first_pregnancy"), style: style),
-                      ),
-
-                      Row(
+                    Visibility(
+                      visible: true,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
 
-                          Expanded(
-
-                            child: RadioListTile(
-                              title: Text(AppTranslations.of(context)!.text("yes"), style: style),
-                              value: "Yes",
-                              groupValue: first_pregnancy,
-                              onChanged: (value){
-                                setState(() {
-                                  first_pregnancy = value.toString();
-                                });
-                              },
-                            ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8.0,top: 8.0),
+                            child: Text(AppTranslations.of(context)!.text("first_pregnancy"), style: style),
                           ),
 
-                          Expanded(
+                          Row(
+                            children: [
 
-                            child: RadioListTile(
-                              title: Text(AppTranslations.of(context)!.text("no"),style: style),
-                              value: "No",
-                              groupValue: first_pregnancy,
-                              onChanged: (value){
-                                setState(() {
-                                  first_pregnancy = value.toString();
-                                });
-                              },
-                            ),
+                              Expanded(
+
+                                child: RadioListTile(
+                                  title: Text(AppTranslations.of(context)!.text("yes"), style: style),
+                                  value: "Yes",
+                                  groupValue: first_pregnancy,
+                                  onChanged: (value){
+                                    setState(() {
+                                      first_pregnancy = value.toString();
+                                    });
+                                  },
+                                ),
+                              ),
+
+                              Expanded(
+
+                                child: RadioListTile(
+                                  title: Text(AppTranslations.of(context)!.text("no"),style: style),
+                                  value: "No",
+                                  groupValue: first_pregnancy,
+                                  onChanged: (value){
+                                    setState(() {
+                                      first_pregnancy = value.toString();
+                                    });
+                                  },
+                                ),
+                              ),
+                            ],
                           ),
+
+
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8.0,top: 8.0),
+                            child: Text(AppTranslations.of(context)!.text("pregnancy_status"), style: style),
+                          ),
+
+                          Row(
+                            children: [
+
+                              Expanded(
+
+                                child: RadioListTile(
+                                  title: Text(AppTranslations.of(context)!.text("yes"), style: style),
+                                  value: "Yes",
+                                  groupValue: pregnant,
+                                  onChanged: (value){
+                                    setState(() {
+                                      pregnant = value.toString();
+                                    });
+                                  },
+                                ),
+                              ),
+
+                              Expanded(
+
+                                child: RadioListTile(
+                                  title: Text(AppTranslations.of(context)!.text("no"),style: style),
+                                  value: "No",
+                                  groupValue: pregnant,
+                                  onChanged: (value){
+                                    setState(() {
+                                      pregnant = value.toString();
+                                    });
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+
+
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8.0,top: 8.0),
+                            child: Text(AppTranslations.of(context)!.text("garbhPath_before"), style: style),
+                          ),
+
+                          Row(
+                            children: [
+
+                              Expanded(
+
+                                child: RadioListTile(
+                                  title: Text(AppTranslations.of(context)!.text("yes"), style: style),
+                                  value: "Yes",
+                                  groupValue: miscarriage,
+                                  onChanged: (value){
+                                    setState(() {
+                                      miscarriage = value.toString();
+                                    });
+                                  },
+                                ),
+                              ),
+
+                              Expanded(
+
+                                child: RadioListTile(
+                                  title: Text(AppTranslations.of(context)!.text("no"),style: style),
+                                  value: "No",
+                                  groupValue: miscarriage,
+                                  onChanged: (value){
+                                    setState(() {
+                                      miscarriage = value.toString();
+                                    });
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8.0,top: 8.0),
+                            child: Text(AppTranslations.of(context)!.text("Labhahti_death"), style: style),
+                          ),
+
+                          Row(
+                            children: [
+
+                              Expanded(
+
+                                child: RadioListTile(
+                                  title: Text(AppTranslations.of(context)!.text("yes"), style: style),
+                                  value: "Yes",
+                                  groupValue: decceased,
+                                  onChanged: (value){
+                                    setState(() {
+                                      decceased = value.toString();
+                                    });
+                                  },
+                                ),
+                              ),
+
+                              Expanded(
+
+                                child: RadioListTile(
+                                  title: Text(AppTranslations.of(context)!.text("no"),style: style),
+                                  value: "No",
+                                  groupValue: decceased,
+                                  onChanged: (value){
+                                    setState(() {
+                                      decceased = value.toString();
+                                    });
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+
                         ],
                       ),
-
-
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8.0,top: 8.0),
-                        child: Text(AppTranslations.of(context)!.text("pregnancy_status"), style: style),
-                      ),
-
-                      Row(
-                        children: [
-
-                          Expanded(
-
-                            child: RadioListTile(
-                              title: Text(AppTranslations.of(context)!.text("yes"), style: style),
-                              value: "Yes",
-                              groupValue: pregnant,
-                              onChanged: (value){
-                                setState(() {
-                                  pregnant = value.toString();
-                                });
-                              },
-                            ),
-                          ),
-
-                          Expanded(
-
-                            child: RadioListTile(
-                              title: Text(AppTranslations.of(context)!.text("no"),style: style),
-                              value: "No",
-                              groupValue: pregnant,
-                              onChanged: (value){
-                                setState(() {
-                                  pregnant = value.toString();
-                                });
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-
-
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8.0,top: 8.0),
-                        child: Text(AppTranslations.of(context)!.text("garbhPath_before"), style: style),
-                      ),
-
-                      Row(
-                        children: [
-
-                          Expanded(
-
-                            child: RadioListTile(
-                              title: Text(AppTranslations.of(context)!.text("yes"), style: style),
-                              value: "Yes",
-                              groupValue: miscarriage,
-                              onChanged: (value){
-                                setState(() {
-                                  miscarriage = value.toString();
-                                });
-                              },
-                            ),
-                          ),
-
-                          Expanded(
-
-                            child: RadioListTile(
-                              title: Text(AppTranslations.of(context)!.text("no"),style: style),
-                              value: "No",
-                              groupValue: miscarriage,
-                              onChanged: (value){
-                                setState(() {
-                                  miscarriage = value.toString();
-                                });
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8.0,top: 8.0),
-                        child: Text(AppTranslations.of(context)!.text("Labhahti_death"), style: style),
-                      ),
-
-                      Row(
-                        children: [
-
-                          Expanded(
-
-                            child: RadioListTile(
-                              title: Text(AppTranslations.of(context)!.text("yes"), style: style),
-                              value: "Yes",
-                              groupValue: decceased,
-                              onChanged: (value){
-                                setState(() {
-                                  decceased = value.toString();
-                                });
-                              },
-                            ),
-                          ),
-
-                          Expanded(
-
-                            child: RadioListTile(
-                              title: Text(AppTranslations.of(context)!.text("no"),style: style),
-                              value: "No",
-                              groupValue: decceased,
-                              onChanged: (value){
-                                setState(() {
-                                  decceased = value.toString();
-                                });
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      ],
                     ),
-                  ),
 
 
                     Padding(
@@ -684,9 +728,13 @@ class _AddNewladiesState extends State<AddNewladies> {
                           Fluttertoast.showToast(msg: "Please enter the Father or husband Name");
                         } else if (aadhar_controller.text.isEmpty) {
                           Fluttertoast.showToast(msg: "Please enter the aadhar Name");
+                        }  else if (number_controller.text.length != 10) {
+                          Fluttertoast.showToast(msg: "Please enter Valid Mobile Number");
                         } else if (dob_controller.text.isEmpty) {
                           Fluttertoast.showToast(msg: "Please enter the Date of birth");
-                        }else if (_chosenValue.toString().length == 0) {
+                        } else if (swastha_controller.text.isEmpty) {
+                          Fluttertoast.showToast(msg: "Please enter the swastha id");
+                        } else if (_chosenValue.toString().length == 0) {
                           Fluttertoast.showToast(msg: "Please select the father occupation");
                         } else if (married.toString().isEmpty) {
                           Fluttertoast.showToast(msg: "Please select the Married Status");
@@ -722,8 +770,9 @@ class _AddNewladiesState extends State<AddNewladies> {
                           }
 
 
-                          AddNewLadyResponse? _loginResponse = await ApiService().addLadyDetails(
+                          AddNewLadyResponse? _loginResponse = await ApiService().UpdateLadyDetails(
                               refid,
+                              user_details!.id!,
                               name_controller.text,
                               husband_controller.text,
                               aadhar_controller.text,
@@ -751,7 +800,7 @@ class _AddNewladiesState extends State<AddNewladies> {
                               style: util().alertStyle,
                               type: AlertType.success,
                               title: "",
-                              desc: "Women added Successfully",
+                              desc: "Women Update Successfully",
                               buttons: [
                                 DialogButton(
                                   child: Text(
@@ -760,8 +809,8 @@ class _AddNewladiesState extends State<AddNewladies> {
                                   ),
                                   onPressed: () {
                                     Navigator.pop(context);
-                                    Navigator.pop(context);
-                                    // Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => ChildrenListView()));
+                                   // Navigator.pop(context);
+                                    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => LadiesListview(refid,false)));
                                   },
                                   color: Color.fromRGBO(0, 179, 134, 1.0),
                                   radius: BorderRadius.circular(0.0),

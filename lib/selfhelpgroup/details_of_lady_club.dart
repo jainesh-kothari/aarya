@@ -5,7 +5,8 @@ import 'package:arya/children/nutrition_class.dart';
 import 'package:arya/children/tika_vavaran.dart';
 import 'package:arya/ladies/add_new_lady.dart';
 import 'package:arya/ladies/lady_nutrition_process.dart';
-import 'package:arya/ladies/self_help_group.dart';
+import 'package:arya/model/self_help_group_model.dart';
+import 'package:arya/selfhelpgroup/add_self_help_group.dart';
 import 'package:arya/ladies/suckle_lady.dart';
 import 'package:arya/language/app_translations.dart';
 import 'package:arya/libary/api_service.dart';
@@ -13,39 +14,56 @@ import 'package:arya/util/appcontants.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_switch/flutter_switch.dart';
 import 'package:intl/intl.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
 import '../model/get_child_gs.dart';
+import '../model/self_help_group_view.dart';
 
 class LadiesGroupDetails extends StatefulWidget {
+
+  String? id;
+  LadiesGroupDetails(this.id);
+
   @override
-  _LadiesGroupDetailsState createState() => _LadiesGroupDetailsState();
+  _LadiesGroupDetailsState createState() => _LadiesGroupDetailsState(this.id);
 }
 
 class _LadiesGroupDetailsState extends State<LadiesGroupDetails> {
+
+  String? id;
+  _LadiesGroupDetailsState(this.id);
 
   AppConstants api = AppConstants();
   final format = DateFormat("dd-MM-yyyy");
   TextStyle style = const TextStyle(fontSize: 14, color: Colors.black,fontWeight: FontWeight.bold);
 
-  List<String> _cardList = [];
-  List<String> minority = [];
+  SelfHelpViewModelData? club_details;
+  List<MemberDetails> _member_list = [];
+  TextEditingController txt_date = TextEditingController(text:'');
+
+  List<bool> _check_list = [];
+
+  getDetails() async {
+    club_details = await ApiService().getSelfHelpGroupDetails(id!);
+
+    setState(() {
+      _member_list = club_details!.memberDetails!;
+      txt_date.text = club_details!.joiningClubDate.toString();
+
+      _member_list.forEach((element) {_check_list.add(false); });
+    });
+
+
+
+
+  }
 
   @override
   void initState() {
     super.initState();
-    _cardList.add("ABC");
-    _cardList.add("XYZ");
-    _cardList.add("PQR");
-    _cardList.add("DFG");
-    _cardList.add("VBN");
-
-    minority.add("");
-    minority.add("");
-    minority.add("");
-    minority.add("");
-    minority.add("");
+    getDetails();
   }
 
 
@@ -88,7 +106,7 @@ class _LadiesGroupDetailsState extends State<LadiesGroupDetails> {
                 padding: const EdgeInsets.only(top:5.0,left: 8.0,right: 10,bottom:8),
                 child: DateTimeField(
                   format: format,
-                  // controller: txt_date,
+                   controller: txt_date,
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
                     enabledBorder: OutlineInputBorder(
@@ -141,10 +159,13 @@ class _LadiesGroupDetailsState extends State<LadiesGroupDetails> {
                       style: TextStyle(color: Colors.white),
                       iconEnabledColor:Colors.black,
                       items: <String>[
-                        '1',
-                        '2',
-                        '3',
-                        '4',
+                        'बाल विवाह अधिनियम - 2006',
+                        'दहेज़ निषेध अधिनियम - 1961',
+                        'राजस्थान डायन-प्रताड़ना निवारण अधिनियम - 2013',
+                        'गर्भधारण पूर्व एवं प्रसूति पूर्ण तकनीक अधिनियम - 1994',
+                        'घरेलू हिंसा से महिलाओ का सरक्षण अधिनियम - 2005',
+                        'महिलाओ का कार्यस्थल पर उत्पीड़न अधिनियम - 2013',
+                        'अन्य'
                       ].map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
@@ -194,12 +215,6 @@ class _LadiesGroupDetailsState extends State<LadiesGroupDetails> {
                           child: Text("Attendance", style: style),
                         ),
 
-
-
-                        Expanded(
-                          flex:3,
-                          child: Container(),
-                        ),
                       ],
                     ),
                   ),
@@ -210,48 +225,40 @@ class _LadiesGroupDetailsState extends State<LadiesGroupDetails> {
                     child: ListView.builder(
                       shrinkWrap: true,
                       physics: ClampingScrollPhysics(),
-                      itemCount: _cardList.length,
+                      itemCount: _member_list.length,
                       itemBuilder: (context, index) {
                         return  Row(
                           children: [
 
                             Expanded(
                               flex:3,
-                              child: Text(_cardList[index], style: style),
+                              child: Text(_member_list[index].name.toString(), style: style),
                             ),
 
                             Expanded(
                               flex:3,
-                              child: Text("Member", style: style),
+                              child: Text(_member_list[index].designation.toString(), style: style),
                             ),
 
                             Expanded(
                               flex:3,
-                              child: RadioListTile(
-                                title: Text("Present", style: style),
-                                value: "Present",
-                                groupValue: minority[index],
-                                onChanged: (value){
-                                  setState(() {
-                                    minority[index] = value.toString();
-                                  });
-                                },
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: FlutterSwitch(
+                                  value: _check_list[index],
+                                  activeColor: Colors.green,
+                                  width: 60.0,
+                                  height: 30.0,
+                                  onToggle: (val) {
+                                    setState(() {
+                                      _check_list[index] = val;
+                                    });
+                                  },
+                                ),
                               ),
                             ),
 
-                            Expanded(
-                              flex:3,
-                              child: RadioListTile(
-                                title: Text("Absent",style: style),
-                                value: "Absent",
-                                groupValue: minority,
-                                onChanged: (value){
-                                  setState(() {
-                                    minority[index] = value.toString();
-                                  });
-                                },
-                              ),
-                            ),
+
                           ],
                         );
                       },
@@ -267,7 +274,7 @@ class _LadiesGroupDetailsState extends State<LadiesGroupDetails> {
                     },
                     child: Padding(
                       padding:
-                      const EdgeInsets.only(left: 40.0, right: 40),
+                      const EdgeInsets.only(left: 40.0, right: 40,top: 50),
                       child: Container(
                         height: 40,
                         width: double.infinity,

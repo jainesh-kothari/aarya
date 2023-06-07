@@ -1,7 +1,8 @@
 import 'package:arya/children/child_home_page.dart';
 import 'package:arya/ladies/ladies_home_page.dart';
 import 'package:arya/language/app_translations.dart';
-import 'package:arya/ladies/list_view.dart';
+import 'package:arya/ladies/ladies_list_view.dart';
+import 'package:arya/registration/my_profile.dart';
 import 'package:arya/start_up/change_language.dart';
 import 'package:arya/util/appcontants.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../selfhelpgroup/self_help_group_listview.dart';
 import 'child_dashboard.dart';
 import 'login_screen.dart';
 
@@ -23,13 +25,15 @@ class _HomePageState extends State<HomePage> {
  AppConstants api = AppConstants();
 
  late SharedPreferences _sharedPreferences;
- bool is_arya = true;
- bool is_gnm = true;
+ bool is_arya = false;
+ bool is_gnm = false;
 
  @override
   void initState() {
-   // _getDetails();
+    _getDetails();
    super.initState();
+
+   // age_ref4 = eng_lang == true ? "Self Help Group" : "स्वयं सहायता समूह";
 
   }
 
@@ -62,43 +66,138 @@ class _HomePageState extends State<HomePage> {
           child: ListView(
             children: [
 
+              Container(
+                child: Card(
+                    color: Colors.white,
+                    clipBehavior: Clip.antiAlias,
+                    shape: RoundedRectangleBorder(
+                        side: BorderSide(color: Colors.grey,width: 0.3,),
+                        borderRadius: BorderRadius.circular(15.0)),
+                    child: InkWell(
+                      onTap: (){
+                        if(is_gnm) {
+                          Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => LadiesHomePage()));
+                        } else{
+                          Fluttertoast.showToast(msg: "User not register as GNM");
+                        }
+
+
+                      },
+                      child: Column(
+
+                        children: [
+
+                          Center(
+
+                            child: Container(
+                              height: 200,
+                              decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    image: AssetImage("assets/images/lady_one.png"),
+                                    fit: BoxFit.fill,
+                                  )),
+
+
+                            ),
+                          ),
+
+                          Padding(
+                            padding: const EdgeInsets.all(6.0),
+                            child: Text(AppTranslations.of(context)!.text("adolescent_girls_and_women"), style: TextStyle(
+                                fontSize: 14, color: Colors.black,fontWeight: FontWeight.bold
+                            )),
+                          )
+
+
+                        ],
+                      ),
+                    )),
+              ),
+
+              SizedBox(height: 10),
+
+              Container(
+                child: Card(
+                  // color: Color(AppConstants.GRAY_COLOR[4]),
+                    color: Colors.white,
+                    clipBehavior: Clip.antiAlias,
+                    shape: RoundedRectangleBorder(
+                        side: BorderSide(color: Colors.grey,width: 0.3,),
+                        borderRadius: BorderRadius.circular(15.0)),
+
+                    child: InkWell(
+                      onTap: (){
+
+                        if(is_arya) {
+                          Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => ChildHomePage()));
+                        } else{
+                          Fluttertoast.showToast(msg: "User not register as Arya");
+                        }
+                      },
+                      child: Column(
+
+                        children: [
+
+                          Center(
+                            child:
+                            Container(
+
+                                height: 200,
+                                decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      image: AssetImage("assets/images/ch3.png"),
+                                      fit: BoxFit.fill,
+                                    ))
+
+                            ),
+                          ),
+
+                          Padding(
+                            padding: const EdgeInsets.all(6.0),
+                            child: Text(AppTranslations.of(context)!.text("children_heading"), style: TextStyle(
+                                fontSize: 14, color: Colors.black,fontWeight: FontWeight.bold
+                            )),
+                          )
+
+
+                        ],
+                      ),
+                    )),
+              ),
+
+              SizedBox(height: 10),
+
               Visibility(
-               visible: is_gnm,
+                visible: true,
                 child: Container(
                   child: Card(
-                    color: Colors.white,
+                    // color: Color(AppConstants.GRAY_COLOR[4]),
+                      color: Colors.white,
                       clipBehavior: Clip.antiAlias,
                       shape: RoundedRectangleBorder(
                           side: BorderSide(color: Colors.grey,width: 0.3,),
                           borderRadius: BorderRadius.circular(15.0)),
+
                       child: InkWell(
                         onTap: (){
-                          Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => LadiesHomePage()));
+                          Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => LadiesSelfHelpListview()));
                         },
                         child: Column(
 
                           children: [
-
-                            Center(
-
-                              child: Container(
-
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      gradient: api.gradient(),
-                                      borderRadius: BorderRadius.circular(45.0)),
-
-                                  child: Image.asset(
-                                      'assets/images/lady_one.png',
-                                      fit:BoxFit.fill
-
-                                  )
-                              ),
+                          Center(
+                            child: Container(
+                              height: 200,
+                              decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                image: AssetImage("assets/images/ld4.jpg"),
+                                fit: BoxFit.fill,
+                              )),
                             ),
-
-                            Padding(
+                          ),
+                          Padding(
                               padding: const EdgeInsets.all(6.0),
-                              child: Text(AppTranslations.of(context)!.text("adolescent_girls_and_women"), style: TextStyle(
+                              child: Text("Self Help Group", style: TextStyle(
                                   fontSize: 14, color: Colors.black,fontWeight: FontWeight.bold
                               )),
                             )
@@ -110,45 +209,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
 
-              Visibility(
-                visible: is_arya,
-                child: Container(
-                  child: Card(
-                     // color: Color(AppConstants.GRAY_COLOR[4]),
-                      color: Colors.white,
-                      clipBehavior: Clip.antiAlias,
-                      shape: RoundedRectangleBorder(
-                          side: BorderSide(color: Colors.grey,width: 0.3,),
-                          borderRadius: BorderRadius.circular(15.0)),
-
-                      child: InkWell(
-                        onTap: (){
-                          Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => ChildHomePage()));
-                        },
-                        child: Column(
-
-                          children: [
-
-                            Center(
-                              child: Container(
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(45.0)),
-                                  child: Image.asset('assets/images/ch3.png')),
-                            ),
-
-                            Padding(
-                              padding: const EdgeInsets.all(6.0),
-                              child: Text(AppTranslations.of(context)!.text("children_heading"), style: TextStyle(
-                                  fontSize: 14, color: Colors.black,fontWeight: FontWeight.bold
-                              )),
-                            )
-
-
-                          ],
-                        ),
-                      )),
-                ),
-              )
+              SizedBox(height: 10),
 
             ],
           ),
@@ -177,14 +238,24 @@ class _HomePageState extends State<HomePage> {
                 ListTile(
                   title: Text("Ladies Dashboard"),
                   onTap: (){
-                    Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => ChartHomePage()));
+
+                    if(is_gnm) {
+                      Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => ChartHomePage()));
+                    } else{
+                      Fluttertoast.showToast(msg: "User not register as GNM");
+                    }
                   },
                 ),
 
                 ListTile(
                   title: Text("Child Dashboard"),
                   onTap: (){
-                    Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => ChartHomePage()));
+
+                    if(is_arya) {
+                      Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => ChartHomePage()));
+                    } else{
+                      Fluttertoast.showToast(msg: "User not register as Arya");
+                    }
                   },
                 ),
 
@@ -195,6 +266,7 @@ class _HomePageState extends State<HomePage> {
               leading: Icon(Icons.person), title: Text("My Profile"),
               onTap: () {
                 Navigator.pop(context);
+                Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => ProfileScreen()));
               },
             ),
             ListTile(

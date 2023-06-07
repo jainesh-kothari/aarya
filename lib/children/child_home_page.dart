@@ -7,8 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
-import 'children_listview.dart';
-
 class ChildHomePage extends StatefulWidget {
   @override
   _ChildHomePageState createState() => new _ChildHomePageState();
@@ -34,6 +32,18 @@ class _ChildHomePageState extends State<ChildHomePage> {
   String total_child_1 ="";
   String total_child_2 ="";
   String total_child_3 ="";
+
+  String normal_child_1 ="";
+  String normal_child_2 ="";
+  String normal_child_3 ="";
+
+  String medium_child_1 ="";
+  String medium_child_2 ="";
+  String medium_child_3 ="";
+
+  String low_child_1 ="";
+  String low_child_2 ="";
+  String low_child_3 ="";
 
   bool visible = true;
   late SharedPreferences _sharedPreferences;
@@ -76,14 +86,23 @@ class _ChildHomePageState extends State<ChildHomePage> {
         if (item.minAge == 0) {
           age_ref1 = eng_lang == true ? "(0 - 6 Months)" : "(0 - 6 महीने)";
           age_ref1_id = item.id.toString();
+          normal_child_1 = item.normal.toString();
+          medium_child_1 = item.medium.toString();
+          low_child_1 = item.low.toString();
           total_child_1 = AppTranslations.of(context)!.text("total") + " : " +item.totalChildren.toString();
         } else if (item.minAge == 7) {
           age_ref2 = eng_lang == true ? "(7 Month - 3 Years)" : "(7 महीने - 3 वर्ष)";
           age_ref2_id = item.id.toString();
+          normal_child_2 = item.normal.toString();
+          medium_child_2 = item.medium.toString();
+          low_child_2 = item.low.toString();
           total_child_2 = AppTranslations.of(context)!.text("total") + " : " +item.totalChildren.toString();
         } else if (item.minAge == 37) {
           age_ref3 = eng_lang == true ? "(3 - 6 Years)" : "(3 - 6 वर्ष)";
           age_ref3_id = item.id.toString();
+          normal_child_3 = item.normal.toString();
+          medium_child_3 = item.medium.toString();
+          low_child_3 = item.low.toString();
           total_child_3 = AppTranslations.of(context)!.text("total") + " : " +item.totalChildren.toString();
         }
       }
@@ -227,14 +246,14 @@ class _ChildHomePageState extends State<ChildHomePage> {
                                 padding: const EdgeInsets.all(4.0),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
-                                  children: const [
+                                  children: [
 
-                                    Icon(Icons.circle, color: Colors.red, size: 15,),
-                                    Text(" : 1  "),
-                                    Icon(Icons.circle, color: Colors.yellow, size: 15,),
-                                    Text(" : 1  "),
-                                    Icon(Icons.circle, color: Colors.green, size: 15,),
-                                    Text(" : 3  "),
+                                    const Icon(Icons.circle, color: Colors.red, size: 15,),
+                                    Text(" : $low_child_1  "),
+                                    const Icon(Icons.circle, color: Colors.yellow, size: 15,),
+                                    Text(" : $medium_child_1  "),
+                                    const Icon(Icons.circle, color: Colors.green, size: 15,),
+                                    Text(" : $normal_child_1 "),
                                   ],
                                 ),
                               ),
@@ -245,14 +264,14 @@ class _ChildHomePageState extends State<ChildHomePage> {
                                 padding: const EdgeInsets.all(4.0),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
-                                  children: const [
+                                  children: [
 
-                                    Icon(Icons.circle, color: Colors.red, size: 15,),
-                                    Text(" : 3  "),
-                                    Icon(Icons.circle, color: Colors.yellow, size: 15,),
-                                    Text(" : 2  "),
-                                    Icon(Icons.circle, color: Colors.green, size: 15,),
-                                    Text(" : 5  "),
+                                    const Icon(Icons.circle, color: Colors.red, size: 15,),
+                                    Text(" : $low_child_2  "),
+                                    const Icon(Icons.circle, color: Colors.yellow, size: 15,),
+                                    Text(" : $medium_child_2  "),
+                                    const Icon(Icons.circle, color: Colors.green, size: 15,),
+                                    Text(" : $normal_child_3 "),
                                   ],
                                 ),
                               ),
@@ -337,14 +356,14 @@ class _ChildHomePageState extends State<ChildHomePage> {
                                 padding: const EdgeInsets.all(4.0),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
-                                  children: const [
+                                  children: [
 
-                                    Icon(Icons.circle, color: Colors.red, size: 15,),
-                                    Text(" : 2  "),
-                                    Icon(Icons.circle, color: Colors.yellow, size: 15,),
-                                    Text(" : 4  "),
-                                    Icon(Icons.circle, color: Colors.green, size: 15,),
-                                    Text(" : 6  "),
+                                    const Icon(Icons.circle, color: Colors.red, size: 15,),
+                                    Text(" : $low_child_3 "),
+                                    const Icon(Icons.circle, color: Colors.yellow, size: 15,),
+                                    Text(" : $medium_child_3  "),
+                                    const Icon(Icons.circle, color: Colors.green, size: 15,),
+                                    Text(" : $normal_child_2 "),
                                   ],
                                 ),
                               ),

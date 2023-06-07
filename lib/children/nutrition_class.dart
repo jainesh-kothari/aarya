@@ -1,45 +1,60 @@
+import 'package:arya/model/child_nutritional_intervention.dart';
+import 'package:arya/model/child_nutritional_suppliments.dart';
 import 'package:arya/util/appcontants.dart';
 import 'package:flutter/material.dart';
 
 import '../language/app_translations.dart';
+import '../libary/api_service.dart';
 
 class NutritionProcess extends StatefulWidget {
+
+  String? user_id;
+  NutritionProcess(this.user_id);
+
   @override
-  _NutritionProcessState createState() => _NutritionProcessState();
+  _NutritionProcessState createState() => _NutritionProcessState(this.user_id);
 }
 
 class _NutritionProcessState extends State<NutritionProcess> {
 
-  @override
-  void initState() {
-    super.initState();
-    _isChecked = List<bool>.filled(_texts.length, false);
-    _isChecked_health = List<bool>.filled(_health_texts.length, false);
-  }
+  String? user_id;
+  _NutritionProcessState(this.user_id);
 
-  int selected = -1;
+  late Future<List<MedicineReference>?> _medicine_list;
+  late List<bool> _medicine_checked;
 
- final List<String> _texts = [
-    "फोलिक एसिड",
-    "आयरन",
-    "विटामिन",
-    "कैल्शियम "
-  ];
+  late Future<List<FoodReference>?> _intervention_list;
+  late List<bool> _intervention_checked;
 
-  final List<String> _health_texts = [
-    "एलोपैथ",
-    "होम्योपैथी",
-    "आयुष",
-  ];
-
- late List<bool> _isChecked;
- late List<bool> _isChecked_health;
   bool _isCheckedTHR = false;
   bool _isCheckedFood = false;
 
   String radioButtonItem = 'ONE';
   int id = 1;
   AppConstants api = new AppConstants();
+
+  @override
+  void initState() {
+    super.initState();
+
+    _intervention_list = ApiService().getChildNutritionalInterventionList(user_id.toString());
+
+    _intervention_list.then((value) => {
+      _intervention_checked = List<bool>.filled(value!.length, false)
+    });
+
+
+    _medicine_list = ApiService().getChildNutritionalSupplements(user_id.toString());
+
+    _medicine_list.then((value) => {
+      _medicine_checked = List<bool>.filled(value!.length, false)
+    });
+
+
+  }
+
+  int selected = -1;
+
 
   @override
   Widget build(BuildContext context) {
@@ -91,24 +106,46 @@ class _NutritionProcessState extends State<NutritionProcess> {
                           ),
                         ),
 
-                        ListView.builder(
-                            itemCount: _texts.length,
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemBuilder: (context, index) {
-                              return CheckboxListTile(
-                                title: Text(_texts[index], style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.w500,color: Colors.black)),
-                                value: _isChecked[index],
-                                onChanged: (val) {
-                                  setState(
-                                        () {
-                                      _isChecked[index] = val!;
-                                    },
-                                  );
-                                },
-                              );
+                        Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: FutureBuilder<List<MedicineReference>?>(
+                              future: _medicine_list,
+                              builder: (context, snapshot) {
 
-                            }
+                                print(snapshot.hasData);
+
+
+                                if(!snapshot.hasData) {
+                                  return const Center(child: Text("No Medicine Found"));
+                                }
+
+                                return ListView.separated(
+                                    shrinkWrap: true,
+                                    itemBuilder: (context,index) {
+                                      var todo = snapshot.data?[index];
+                                      return CheckboxListTile(
+
+                                        title: Text(todo!.name.toString(),
+                                            style: TextStyle(
+                                                fontSize: 13.0,
+                                                fontWeight: FontWeight.w500,
+                                                color: Colors.black)),
+                                        value: _medicine_checked[index],
+                                        onChanged: (val) {
+                                          setState(
+                                                () {
+                                                  _medicine_checked[index] = val!;
+                                            },
+                                          );
+                                        },
+                                      );;
+                                    },
+                                    separatorBuilder: (context,index) {
+                                      return Container();
+                                    },
+                                    itemCount: snapshot.data?.length ?? 0);
+                              },
+                            )
                         ),
 
                         InkWell(
@@ -314,24 +351,46 @@ class _NutritionProcessState extends State<NutritionProcess> {
                           )),
                         ),
 
-                      ListView.builder(
-                            itemCount: _health_texts.length,
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemBuilder: (context, index) {
-                              return CheckboxListTile(
-                                title: Text(_health_texts[index], style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.w500,color: Colors.black)),
-                                value: _isChecked_health[index],
-                                onChanged: (val) {
-                                  setState(
-                                        () {
-                                          _isChecked_health[index] = val!;
-                                    },
-                                  );
-                                },
-                              );
+                        Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: FutureBuilder<List<FoodReference>?>(
+                              future: _intervention_list,
+                              builder: (context, snapshot) {
 
-                            }
+                                print(snapshot.hasData);
+
+
+                                if(!snapshot.hasData) {
+                                  return const Center(child: Text("No Medicine Found"));
+                                }
+
+                                return ListView.separated(
+                                    shrinkWrap: true,
+                                    itemBuilder: (context,index) {
+                                      var todo = snapshot.data?[index];
+                                      return CheckboxListTile(
+
+                                        title: Text(todo!.name.toString(),
+                                            style: TextStyle(
+                                                fontSize: 13.0,
+                                                fontWeight: FontWeight.w500,
+                                                color: Colors.black)),
+                                        value: _intervention_checked[index],
+                                        onChanged: (val) {
+                                          setState(
+                                                () {
+                                                  _intervention_checked[index] = val!;
+                                            },
+                                          );
+                                        },
+                                      );;
+                                    },
+                                    separatorBuilder: (context,index) {
+                                      return Container();
+                                    },
+                                    itemCount: snapshot.data?.length ?? 0);
+                              },
+                            )
                         ),
 
                         InkWell(

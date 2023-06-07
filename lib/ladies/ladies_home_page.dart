@@ -1,14 +1,15 @@
 import 'package:arya/children/children_list_view_category.dart';
-import 'package:arya/ladies/self_help_group.dart';
+import 'package:arya/selfhelpgroup/add_self_help_group.dart';
 import 'package:arya/language/app_translations.dart';
 import 'package:arya/libary/api_service.dart';
 import 'package:arya/model/child_dashboard.dart';
-import 'package:arya/ladies/list_view.dart';
+import 'package:arya/ladies/ladies_list_view.dart';
+import 'package:arya/model/women_dashboard_model.dart';
 import 'package:arya/util/appcontants.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'add_self_group.dart';
+import '../selfhelpgroup/self_help_group_listview.dart';
 
 
 class LadiesHomePage extends StatefulWidget {
@@ -22,23 +23,36 @@ class _LadiesHomePageState extends State<LadiesHomePage> {
   AppConstants api = AppConstants();
 
   // late Future<ChildDashBoardDetils?> _dashboard;
-  late ChildDashBoardDetils _dashboard;
-  late List<UserAgeRef> list;
+  late WomenHomePageModel _dashboard;
+  late List<WomenHomePageModelData> list;
 
   String age_ref1 ="";
   String age_ref2 ="";
   String age_ref3 ="";
-  String age_ref4 ="";
 
   String age_ref1_id ="";
   String age_ref2_id ="";
   String age_ref3_id ="";
-  String age_ref4_id ="";
 
-  String total_child_1 ="";
-  String total_child_2 ="";
-  String total_child_3 ="";
-  String total_child_4 ="";
+  String total_women_1 ="";
+  String total_women_2 ="";
+  String total_women_3 ="";
+
+  String women_cat_1 ="";
+  String women_cat_2 ="";
+  String women_cat_3 ="";
+
+  String high_women_1 ="0";
+  String high_women_2 ="0";
+  String high_women_3 ="0";
+
+  String medium_women_1 ="0";
+  String medium_women_2 ="0";
+  String medium_women_3 ="0";
+
+  String low_women_1 ="0";
+  String low_women_2 ="0";
+  String low_women_3 ="0";
 
   bool visible = true;
   late SharedPreferences _sharedPreferences;
@@ -52,10 +66,15 @@ class _LadiesHomePageState extends State<LadiesHomePage> {
 
   _getData() async {
 
-    _dashboard = (await ApiService().getChildDashBoard()) as ChildDashBoardDetils;
+    _dashboard = (await ApiService().getWomenDashBoard()) as WomenHomePageModel;
+
+    list = _dashboard.data!;
+
     _sharedPreferences = await SharedPreferences.getInstance();
 
     setState(() {
+
+
 
       if(_sharedPreferences.getString(AppConstants.SELECTED_LANGUAGE) == "English") {
         eng_lang = true;
@@ -63,35 +82,61 @@ class _LadiesHomePageState extends State<LadiesHomePage> {
         eng_lang = false;
       }
 
-      list = _dashboard.data!.userAgeRef!;
 
       age_ref1 = eng_lang == true ? "Adolescent girls" : "किशोरियां";
       age_ref2 = eng_lang == true ? "Pregnant Women" : "गर्भवती महिला";
       age_ref3 = eng_lang == true ? "Lactating Mother" : "स्तनपान कराने वाली माँ";
-      age_ref4 = eng_lang == true ? "Self Help Group" : "स्वयं सहायता समूह";
 
-      total_child_1 = AppTranslations.of(context)!.text("total") + " : 15";
-      total_child_2 = AppTranslations.of(context)!.text("total") + " : 25";
-      total_child_3 = AppTranslations.of(context)!.text("total") + " : 19";
-      total_child_4 = AppTranslations.of(context)!.text("total") + " : 18";
+      total_women_1 = AppTranslations.of(context)!.text("total") + " : 0";
+      total_women_2 = AppTranslations.of(context)!.text("total") + " : 0";
+      total_women_3 = AppTranslations.of(context)!.text("total") + " : 0";
 
-      /*for(var item in list) {
-        if (item.minAge == 0) {
+      for(var item in list) {
 
-          age_ref1_id = item.id.toString();
-          total_child_1 = item.totalChildren.toString();
-        } else if (item.minAge == 6) {
+        if(item.name! == "Lactating Mother") {
+          women_cat_3 = item.id!;
+          total_women_3 = AppTranslations.of(context)!.text("total") + " : ${item.womenCount!}";
 
-          age_ref2_id = item.id.toString();
-          total_child_2 = item.totalChildren.toString();
-        } else if (item.minAge == 36) {
+          int? i = item.veryHighCount;
+          int? j = item.highCount;
 
-          age_ref3_id = item.id.toString();
-          total_child_3 = item.totalChildren.toString();
+          high_women_3 = "${i! + j!}";
+          medium_women_3 = "${item.lowCount}";
+          low_women_3 = "${item.veryLow}";
+
         }
-      }*/
+
+        if(item.name! == "Pregnant Women") {
+          women_cat_2 = item.id!;
+          total_women_2 = AppTranslations.of(context)!.text("total") +" : ${item.womenCount!}";
+
+          int? i = item.veryHighCount;
+          int? j = item.highCount;
+
+          high_women_2 = "${i! + j!}";
+          medium_women_2 = "${item.lowCount}";
+          low_women_2 = "${item.veryLow}";
+
+        }
+
+        if(item.name! == "Adolescent girls and Lady (15-45 Age)") {
+          women_cat_1 = item.id!;
+          total_women_1 = AppTranslations.of(context)!.text("total") + " : ${item.womenCount!}";
+
+          int? i = item.veryHighCount;
+          int? j = item.highCount;
+
+          high_women_1 = "${i! + j!}";
+          medium_women_1 = "${item.lowCount}";
+          low_women_1 = "${item.veryLow}";
+        }
+      }
 
       visible = false;
+
+      print(women_cat_1);
+      print(women_cat_2);
+      print(women_cat_3);
     });
   }
 
@@ -143,7 +188,7 @@ class _LadiesHomePageState extends State<LadiesHomePage> {
                                     ),
                                     child: InkWell(
                                       onTap: (){
-                                        Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => LadiesListview()));
+                                        Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => LadiesListview(women_cat_1, false)));
                                       },
                                       child: Card(
                                           color: Colors.transparent,
@@ -164,7 +209,7 @@ class _LadiesHomePageState extends State<LadiesHomePage> {
 
                                               Padding(
                                                 padding: EdgeInsets.all(8.0),
-                                                child: Text("$total_child_1", style: const TextStyle(
+                                                child: Text("$total_women_1", style: const TextStyle(
                                                     fontSize: 13, color: Colors.black,fontWeight: FontWeight.bold
                                                 )),
                                               ),
@@ -188,7 +233,7 @@ class _LadiesHomePageState extends State<LadiesHomePage> {
                                     ),
                                     child: InkWell(
                                       onTap: (){
-                                        Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => LadiesListview()));
+                                        Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => LadiesListview(women_cat_2, true)));
                                       },
                                       child: Card(
                                           color: Colors.transparent,
@@ -209,7 +254,7 @@ class _LadiesHomePageState extends State<LadiesHomePage> {
 
                                               Padding(
                                                 padding: EdgeInsets.all(8.0),
-                                                child: Text("$total_child_2", style: const TextStyle(
+                                                child: Text("$total_women_2", style: const TextStyle(
                                                     fontSize: 13, color: Colors.black,fontWeight: FontWeight.bold
                                                 )),
                                               ),
@@ -230,14 +275,14 @@ class _LadiesHomePageState extends State<LadiesHomePage> {
                                 padding: const EdgeInsets.all(4.0),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
-                                  children: const [
+                                  children: [
 
                                     Icon(Icons.circle, color: Colors.red, size: 15,),
-                                    Text(" : 8  "),
+                                    Text(" : ${high_women_1} "),
                                     Icon(Icons.circle, color: Colors.yellow, size: 15,),
-                                    Text(" : 3  "),
+                                    Text(" : ${medium_women_1} "),
                                     Icon(Icons.circle, color: Colors.green, size: 15,),
-                                    Text(" : 4  "),
+                                    Text(" : ${low_women_1} "),
                                   ],
                                 ),
                               ),
@@ -248,14 +293,14 @@ class _LadiesHomePageState extends State<LadiesHomePage> {
                                 padding: const EdgeInsets.all(4.0),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
-                                  children: const [
+                                  children: [
 
                                     Icon(Icons.circle, color: Colors.red, size: 15,),
-                                    Text(" : 13  "),
+                                    Text(" : ${high_women_2} "),
                                     Icon(Icons.circle, color: Colors.yellow, size: 15,),
-                                    Text(" : 2  "),
+                                    Text(" : ${medium_women_2} "),
                                     Icon(Icons.circle, color: Colors.green, size: 15,),
-                                    Text(" : 10  "),
+                                    Text(" : ${low_women_2} "),
                                   ],
                                 ),
                               ),
@@ -288,7 +333,7 @@ class _LadiesHomePageState extends State<LadiesHomePage> {
                                     ),
                                     child: InkWell(
                                       onTap: (){
-                                        Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => LadiesListview()));
+                                        Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => LadiesListview(women_cat_3, true)));
                                       },
                                       child: Card(
                                           color: Colors.transparent,
@@ -309,7 +354,7 @@ class _LadiesHomePageState extends State<LadiesHomePage> {
 
                                               Padding(
                                                 padding: EdgeInsets.all(8.0),
-                                                child: Text("$total_child_3", style: TextStyle(
+                                                child: Text("$total_women_3", style: TextStyle(
                                                     fontSize: 13, color: Colors.black,fontWeight: FontWeight.bold
                                                 )),
                                               ),
@@ -322,45 +367,7 @@ class _LadiesHomePageState extends State<LadiesHomePage> {
                             Expanded(
                               child: Padding(
                                 padding: const EdgeInsets.all(4.0),
-                                child: Container(
-                                    height: 170,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      image: const DecorationImage(
-                                          image: AssetImage('assets/images/ld4.jpg'),
-                                          fit:BoxFit.fill
-                                      ),
-                                    ),
-                                    child: InkWell(
-                                      onTap: (){
-                                        Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => LadiesSelfHelpListview()));
-                                      },
-                                      child: Card(
-                                          color: Colors.transparent,
-                                          margin: EdgeInsets.zero,
-                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                                          shadowColor: Colors.black45,
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                            children: [
-
-                                              Padding(
-                                                padding: EdgeInsets.all(8.0),
-                                                child: Text("$age_ref4", style: TextStyle(
-                                                    fontSize: 14, color: Colors.black,fontWeight: FontWeight.bold
-                                                )),
-                                              ),
-
-                                              Padding(
-                                                padding: EdgeInsets.all(8.0),
-                                                child: Text("$total_child_4", style: TextStyle(
-                                                    fontSize: 13, color: Colors.black,fontWeight: FontWeight.bold
-                                                )),
-                                              ),
-                                            ],
-                                          )),
-                                    )),
+                                child: Container(),
                               ),
                             ),
 
@@ -376,14 +383,14 @@ class _LadiesHomePageState extends State<LadiesHomePage> {
                                 padding: const EdgeInsets.all(4.0),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
-                                  children: const [
+                                  children: [
 
                                     Icon(Icons.circle, color: Colors.red, size: 15,),
-                                    Text(" : 4  "),
+                                    Text(" : ${high_women_3} "),
                                     Icon(Icons.circle, color: Colors.yellow, size: 15,),
-                                    Text(" : 10  "),
+                                    Text(" : ${medium_women_3} "),
                                     Icon(Icons.circle, color: Colors.green, size: 15,),
-                                    Text(" : 5  "),
+                                    Text(" : ${low_women_3} "),
                                   ],
                                 ),
                               ),
@@ -392,18 +399,7 @@ class _LadiesHomePageState extends State<LadiesHomePage> {
                             Expanded(
                               child: Padding(
                                 padding: const EdgeInsets.all(4.0),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: const [
-
-                                    Icon(Icons.circle, color: Colors.red, size: 15,),
-                                    Text(" : 8  "),
-                                    Icon(Icons.circle, color: Colors.yellow, size: 15,),
-                                    Text(" : 4  "),
-                                    Icon(Icons.circle, color: Colors.green, size: 15,),
-                                    Text(" : 6  "),
-                                  ],
-                                ),
+                                child: Container(),
                               ),
                             ),
 
