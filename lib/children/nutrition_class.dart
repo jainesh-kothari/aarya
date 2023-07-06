@@ -1,10 +1,14 @@
+import 'package:arya/model/buble_data.dart';
 import 'package:arya/model/child_nutritional_intervention.dart';
 import 'package:arya/model/child_nutritional_suppliments.dart';
 import 'package:arya/util/appcontants.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 import '../language/app_translations.dart';
 import '../libary/api_service.dart';
+import '../libary/util.dart';
 
 class NutritionProcess extends StatefulWidget {
 
@@ -20,8 +24,9 @@ class _NutritionProcessState extends State<NutritionProcess> {
   String? user_id;
   _NutritionProcessState(this.user_id);
 
-  late Future<List<MedicineReference>?> _medicine_list;
-  late List<bool> _medicine_checked;
+  List<MedicineReference> _supplement_list =[];
+  late List<BubbleData> _suppliment_texts = [];
+  List<String> _supplement_ids = [];
 
   late Future<List<FoodReference>?> _intervention_list;
   late List<bool> _intervention_checked;
@@ -33,9 +38,8 @@ class _NutritionProcessState extends State<NutritionProcess> {
   int id = 1;
   AppConstants api = new AppConstants();
 
-  @override
-  void initState() {
-    super.initState();
+
+  getSupplementData() async {
 
     _intervention_list = ApiService().getChildNutritionalInterventionList(user_id.toString());
 
@@ -44,13 +48,21 @@ class _NutritionProcessState extends State<NutritionProcess> {
     });
 
 
-    _medicine_list = ApiService().getChildNutritionalSupplements(user_id.toString());
 
-    _medicine_list.then((value) => {
-      _medicine_checked = List<bool>.filled(value!.length, false)
+    _supplement_list = (await ApiService().getChildNutritionalSupplements(user_id.toString()))!;
+
+    setState(() {
+      for (var i = 0; i < _supplement_list!.length; i++) {
+        BubbleData bubbleData = BubbleData(id : "${_supplement_list![i].id.toString().trim()}", name: "${_supplement_list![i].name.toString()}", flag: false);
+        _suppliment_texts.add(bubbleData);
+      }
     });
+  }
 
-
+  @override
+  void initState() {
+    super.initState();
+    getSupplementData();
   }
 
   int selected = -1;
@@ -108,49 +120,74 @@ class _NutritionProcessState extends State<NutritionProcess> {
 
                         Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: FutureBuilder<List<MedicineReference>?>(
-                              future: _medicine_list,
-                              builder: (context, snapshot) {
-
-                                print(snapshot.hasData);
-
-
-                                if(!snapshot.hasData) {
-                                  return const Center(child: Text("No Medicine Found"));
-                                }
-
-                                return ListView.separated(
-                                    shrinkWrap: true,
-                                    itemBuilder: (context,index) {
-                                      var todo = snapshot.data?[index];
-                                      return CheckboxListTile(
-
-                                        title: Text(todo!.name.toString(),
-                                            style: TextStyle(
-                                                fontSize: 13.0,
-                                                fontWeight: FontWeight.w500,
-                                                color: Colors.black)),
-                                        value: _medicine_checked[index],
-                                        onChanged: (val) {
-                                          setState(
-                                                () {
-                                                  _medicine_checked[index] = val!;
-                                            },
-                                          );
+                            child:   ListView.builder(
+                                itemCount: _suppliment_texts.length,
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemBuilder: (context, index) {
+                                  return CheckboxListTile(
+                                    title: Text(_suppliment_texts[index].name.toString(),
+                                        style: const TextStyle(
+                                            fontSize: 13.0,
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.black)),
+                                    value: _suppliment_texts[index].flag,
+                                    onChanged: (val) {
+                                      setState(
+                                            () {
+                                          _suppliment_texts[index].flag = val!;
                                         },
-                                      );;
+                                      );
                                     },
-                                    separatorBuilder: (context,index) {
-                                      return Container();
-                                    },
-                                    itemCount: snapshot.data?.length ?? 0);
-                              },
-                            )
+                                  );
+                                }),
                         ),
 
                         InkWell(
-                          onTap: () {
-                            //  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => HomePage()));
+                          onTap: () async {
+                            setState(() {
+
+                              _supplement_ids =[];
+
+                              for (var i = 0; i < _suppliment_texts!.length; i++) {
+                                if (_suppliment_texts[i].flag == true) {
+
+                                  String value = '"${_suppliment_texts[i].id.toString()}"';
+
+                                  _supplement_ids.add(value);
+                                }
+                              }
+                            });
+
+
+
+                            String? response = await ApiService().addChildSupplementsDetails(user_id.toString(), _supplement_ids.toString());
+
+                            if(response == "201"){
+                              Alert(
+                                context: context,
+                                style: util().alertStyle,
+                                type: AlertType.success,
+                                title: "",
+                                desc: "Data added Successfully",
+                                buttons: [
+                                  DialogButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    color: Color.fromRGBO(0, 179, 134, 1.0),
+                                    radius: BorderRadius.circular(0.0),
+                                    child: const Text(
+                                      "Okay",
+                                      style: TextStyle(color: Colors.white, fontSize: 20),
+                                    ),
+                                  ),
+                                ],
+                              ).show();
+                            } else {
+                              Fluttertoast.showToast(msg: "Something went wrong");
+                            }
+
                           },
                           child: Padding(
                             padding:

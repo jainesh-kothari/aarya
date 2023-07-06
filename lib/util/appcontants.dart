@@ -61,6 +61,7 @@ class AppConstants {
   static const String LOGIN_AS = "login_as";
   static const String IS_ARYA = "IS_ARYA";
   static const String IS_GNM = "IS_GNM";
+  static const String IS_SATHIN = "IS_SATHIN";
   static const String TOKEN = "token";
   static const String NAME = "name";
   static const String USER_MOBILE_NUMBER = "user_mobile_number";

@@ -47,6 +47,7 @@ class User {
   List<Roles>? roles;
   bool? isArya;
   bool? isGnm;
+  bool? is_sathin;
 
   User(
       {this.id,
@@ -57,6 +58,7 @@ class User {
       this.email,
       this.roles,
       this.isArya,
+      this.is_sathin,
       this.isGnm});
 
   User.fromJson(Map<String, dynamic> json) {
@@ -74,6 +76,7 @@ class User {
     }
     isArya = json['is_arya'];
     isGnm = json['is_gnm'];
+    is_sathin = json['is_sathin'];
   }
 
   Map<String, dynamic> toJson() {
@@ -89,6 +92,7 @@ class User {
     }
     data['is_arya'] = this.isArya;
     data['is_gnm'] = this.isGnm;
+    data['is_sathin'] = this.is_sathin;
     return data;
   }
 }

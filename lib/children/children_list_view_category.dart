@@ -198,7 +198,7 @@ class _ChildrenListViewCategoryState extends State<ChildrenListViewCategory> {
                           ),
                         );
                       },
-                      separatorBuilder: (context,index) {
+                       separatorBuilder: (context,index) {
                         return Container();
                       },
                       itemCount: snapshot.data?.length ?? 0);

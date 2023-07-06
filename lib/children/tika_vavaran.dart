@@ -1,9 +1,13 @@
 import 'package:arya/model/child_vaccination_gs.dart';
 import 'package:arya/util/appcontants.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:timeline_tile/timeline_tile.dart';
 import '../language/app_translations.dart';
 import '../libary/api_service.dart';
+import '../libary/util.dart';
+import '../model/buble_data.dart';
 
 class TikaVivaran extends StatefulWidget {
 
@@ -19,22 +23,29 @@ class _TikaVivaranState extends State<TikaVivaran> {
   String? user_id;
   _TikaVivaranState(this.user_id);
 
-  late Future<List<VaccinationReference>?> _vaccination_list;
-  late List<bool> _isChecked;
+  late List<VaccinationReference>? _vaccination_list;
+  late List<BubbleData> _suppliment_texts = [];
+  List<String> _supplement_ids = [];
   AppConstants api = AppConstants();
   late int size =0;
+  bool visible = false;
+
+  getVaccinationData() async {
+
+    _vaccination_list = (await ApiService().getVaccinationList(user_id.toString()))!;
+
+    setState(() {
+      for (var i = 0; i < _vaccination_list!.length; i++) {
+        BubbleData bubbleData = BubbleData(id : "${_vaccination_list![i].id.toString().trim()}", name: "${_vaccination_list![i].name.toString()}", flag: false);
+        _suppliment_texts.add(bubbleData);
+      }
+    });
+  }
 
   @override
   void initState() {
     super.initState();
-
-    _vaccination_list = ApiService().getVaccinationList(user_id.toString());
-
-    _vaccination_list.then((value) => {
-    _isChecked = List<bool>.filled(value!.length, false)
-    });
-
-
+    getVaccinationData();
   }
 
   @override
@@ -51,155 +62,121 @@ class _TikaVivaranState extends State<TikaVivaran> {
         ),
       ),
 
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: FutureBuilder<List<VaccinationReference>?>(
-          future: _vaccination_list,
-          builder: (context, snapshot) {
+      body: Stack(
+        children: [
 
-            print(snapshot.hasData);
+          ListView(
+            children: [
 
-            if(snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            }
-
-            if(!snapshot.hasData) {
-              return const Center(child: Text("No Vaccination Found"));
-            }
-
-            return ListView.separated(
-                shrinkWrap: true,
-                itemBuilder: (context,index) {
-                  var todo = snapshot.data?[index];
-                  return CheckboxListTile(
-
-                    title: Text(todo!.name.toString(),
-                        style: TextStyle(
-                            fontSize: 13.0,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black)),
-                    value: _isChecked[index],
-                    onChanged: (val) {
-                      setState(
-                            () {
-                          _isChecked[index] = val!;
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child:   ListView.builder(
+                    itemCount: _suppliment_texts.length,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      return CheckboxListTile(
+                        title: Text(_suppliment_texts[index].name.toString(),
+                            style: const TextStyle(
+                                fontSize: 13.0,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black)),
+                        value: _suppliment_texts[index].flag,
+                        onChanged: (val) {
+                          setState(
+                                () {
+                              _suppliment_texts[index].flag = val!;
+                            },
+                          );
                         },
                       );
-                    },
-                  );;
-                },
-                separatorBuilder: (context,index) {
-                  return Container();
-                },
-                itemCount: snapshot.data?.length ?? 0);
-          },
-        )
-
-
-       /* ListView(
-          children: [
-
-            ListView.builder(
-                itemCount: _texts.length,
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return CheckboxListTile(
-                    title: Text(_texts[index],
-                        style: TextStyle(
-                            fontSize: 13.0,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black)),
-                    value: _isChecked[index],
-                    onChanged: (val) {
-                      setState(
-                            () {
-                          _isChecked[index] = val!;
-                        },
-                      );
-                    },
-                  );
-                }),
-
-            Padding(
-              padding: const EdgeInsets.only(left: 12.0,top: 15.0),
-              child: Center(
-                child: Text("Below is the guideline for vaccination of 6 Months - 3 Year children  ", style: TextStyle(
-                    fontSize: 14, color: Colors.black,fontWeight: FontWeight.bold
-                )),
+                    }),
               ),
-            ),
 
-            ListView.builder(
-                itemCount: 2,
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
-                    child: TimelineTile(
-
-
-
-                      alignment: TimelineAlign.manual,
-                      lineXY: 0.1,
-
-                      indicatorStyle: IndicatorStyle(
-                          width: 60, height: 60,
-                          indicator: _IndicatorExample(number: index ==0 ? "9-12 Months" : "16-24 Months"),
-                          drawGap: true),
-
-                      beforeLineStyle: LineStyle(color: Color(AppConstants.GRAY_COLOR[4])),
-
-                      endChild: Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(height: 10),
-
-                            Text("Measeled Comntaing vaccination" , style: TextStyle(fontSize: 10)),
-                            Text("Measeled vaccination" , style: TextStyle(fontSize: 10)),
-                            Text("Comntaing vaccination" , style: TextStyle(fontSize: 10)),
-                            Text("Measeled Comntaing vaccination" , style: TextStyle(fontSize: 10)),
-
-                            SizedBox(height: 5),
-
-                          ],
+              InkWell(
+                onTap: () async {
+                  setState(() {
+                    _supplement_ids =[];
+                    for (var i = 0; i < _suppliment_texts!.length; i++) {
+                      if (_suppliment_texts[i].flag == true) {
+                        String value = '"${_suppliment_texts[i].id.toString()}"';
+                        _supplement_ids.add(value);
+                      }
+                    }
+                  });
+                  setState(() {
+                    visible = true;
+                  });
+                  String? response = await ApiService().addChildVaccinationDetails(user_id.toString(), _supplement_ids.toString());
+                  setState(() {
+                    visible = false;
+                  });
+                  if(response == "201"){
+                    Alert(
+                      context: context,
+                      style: util().alertStyle,
+                      type: AlertType.success,
+                      title: "",
+                      desc: "Data added Successfully",
+                      buttons: [
+                        DialogButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          color: Color.fromRGBO(0, 179, 134, 1.0),
+                          radius: BorderRadius.circular(0.0),
+                          child: const Text(
+                            "Okay",
+                            style: TextStyle(color: Colors.white, fontSize: 20),
+                          ),
                         ),
+                      ],
+                    ).show();
+                  } else {
+                    Fluttertoast.showToast(msg: "Something went wrong");
+                  }
+
+                },
+                child: Padding(
+                  padding:
+                  const EdgeInsets.only(left: 40.0, right: 40,top: 20,bottom: 20),
+                  child: Container(
+                    height: 40,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                        gradient: api.gradient(),
+                        borderRadius: BorderRadius.circular(10),
+                        border: const Border(
+                          bottom: BorderSide(color: Colors.black),
+                          top: BorderSide(color: Colors.black),
+                          left: BorderSide(color: Colors.black),
+                          right: BorderSide(color: Colors.black),
+                        )),
+                    child: Center(
+                      child: Text(
+                        AppTranslations.of(context)!.text("save"),
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16,
+                            color: Colors.white),
                       ),
                     ),
-                  );
-                }),
+                  ),
+                ),
+              ),
 
-          ],
-        ),*/
-      ),
-    );
-  }
-}
-
-
-class _IndicatorExample extends StatelessWidget {
-  const _IndicatorExample({Key? key, required this.number}) : super(key: key);
-
-  final String number;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.fromBorderSide(
-          BorderSide(
-            color: Colors.blue,
-            width: 2,
+            ],
           ),
-        ),
-      ),
-      child: Center(
-        child: Text(number, textAlign : TextAlign.center,style: const TextStyle(fontSize: 12,color: Colors.black,fontWeight: FontWeight.bold),
-        ),
+
+          visible ? Container(
+            color: Colors.black.withOpacity(0.5),
+            child: const Center(
+              child: CircularProgressIndicator(),
+            ),
+          ) : Container()
+        ],
+
+
       ),
     );
   }

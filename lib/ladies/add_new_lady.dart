@@ -722,7 +722,7 @@ class _AddNewladiesState extends State<AddNewladies> {
                           }
 
 
-                          AddNewLadyResponse? _loginResponse = await ApiService().addLadyDetails(
+                          String? _loginResponse = await ApiService().addLadyDetails(
                               refid,
                               name_controller.text,
                               husband_controller.text,
@@ -745,7 +745,7 @@ class _AddNewladiesState extends State<AddNewladies> {
                           });
 
 
-                          if(_loginResponse!=null) {
+                          if(_loginResponse == "201") {
                             Alert(
                               context: context,
                               style: util().alertStyle,
@@ -769,10 +769,8 @@ class _AddNewladiesState extends State<AddNewladies> {
                               ],
                             ).show();
                           } else {
-                            Fluttertoast.showToast(msg: "Something went wrong");
+                            Fluttertoast.showToast(msg: ""+_loginResponse!);
                           }
-
-                          print(_loginResponse);
                         }
 
                       },

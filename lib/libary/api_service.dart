@@ -5,6 +5,8 @@ import 'package:arya/model/caste_category.dart';
 import 'package:arya/model/child_category_gs.dart';
 import 'package:arya/model/child_dashboard.dart';
 import 'package:arya/model/child_dashboard_model.dart';
+import 'package:arya/model/child_health_data_gs.dart';
+import 'package:arya/model/child_height_weight_data_gs.dart';
 import 'package:arya/model/child_nutritional_intervention.dart';
 import 'package:arya/model/child_nutritional_suppliments.dart';
 import 'package:arya/model/child_vaccination_gs.dart';
@@ -13,6 +15,7 @@ import 'package:arya/model/lady_intervention_model.dart';
 import 'package:arya/model/lady_nutritional_model.dart';
 import 'package:arya/model/login_gs.dart';
 import 'package:arya/model/particular_child_data_gs.dart';
+import 'package:arya/model/profile_gs.dart';
 import 'package:arya/model/self_help_group_list_view.dart';
 import 'package:arya/model/self_help_group_model.dart';
 import 'package:arya/model/self_help_group_view.dart';
@@ -250,6 +253,8 @@ class ApiService {
 
       var response = await http.get(url, headers: headers);
 
+      print(jsonDecode(response.body));
+
       if (response.statusCode == 200) {
         ChildNutritionalIntervention food = ChildNutritionalIntervention.fromJson(jsonDecode(response.body));
 
@@ -464,18 +469,11 @@ class ApiService {
         'Authorization': "Bearer $token"
       };
 
-      print(childrenId);
-      print(height);
-      print(weight);
-      print(date);
-
       final json = '{ "childrenId":"$childrenId","height":$height,"weight":$weight, "date":"$date"}';
 
-      print(json);
 
       var response = await post(url, headers: headers, body: json);
-      print(response.statusCode);
-      print(response.body);
+
       if (response.statusCode == 201) {
         return response.statusCode.toString();
       } else {
@@ -488,7 +486,7 @@ class ApiService {
   }
 
 
-   Future<AddNewLadyResponse?> addLadyDetails(
+   Future<String?> addLadyDetails(
        String refId,
        String name,
        String husbandName,
@@ -530,9 +528,9 @@ class ApiService {
        print(response.statusCode);
        print(response.body);
        if (response.statusCode == 201) {
-         return AddNewLadyResponse.fromJson(jsonDecode(response.body));
+         return response.statusCode.toString();
        } else {
-         return null;
+         return AddNewLadyResponse.fromJson(jsonDecode(response.body)).toString();
        }
      } catch (e) {
        log(e.toString());
@@ -947,6 +945,146 @@ class ApiService {
 
        final json ='{"womenId":"$womenId","vaccinationIDs": $vaccinationIDs }';
 
+       var response = await post(url, headers: headers, body: json);
+
+       return response.statusCode.toString();
+
+     } catch (e) {
+       log(e.toString());
+     }
+     return null;
+   }
+
+
+
+
+   Future<List<ChildHealthDataData>?> getChildHealthDataList(String id) async {
+     try {
+       _sharedPreferences = await SharedPreferences.getInstance();
+       String token = _sharedPreferences.getString(AppConstants.TOKEN)!;
+
+       var url = Uri.parse("$API_LINK/children/health/$id");
+
+       final headers = <String, String>{
+         'Content-Type': 'application/json; charset=UTF-8',
+         'Authorization': "Bearer $token"
+       };
+
+       var response = await http.get(url, headers: headers);
+       print(response.statusCode);
+       print(response.body);
+       if (response.statusCode == 200) {
+         ChildHealthData child_list = ChildHealthData.fromJson(jsonDecode(response.body));
+
+         return child_list.data;
+       } else {
+         return null;
+       }
+     } catch (e) {
+       log(e.toString());
+     }
+     return null;
+   }
+
+
+
+   Future<List<ChildHeightWeightData>?> getChildHeightData(String user_id) async {
+     try {
+       _sharedPreferences = await SharedPreferences.getInstance();
+       String token = _sharedPreferences.getString(AppConstants.TOKEN)!;
+
+       var url = Uri.parse("$API_LINK/children/health/height/$user_id");
+
+       final headers = <String, String>{
+         'Content-Type': 'application/json; charset=UTF-8',
+         'Authorization': "Bearer $token"
+       };
+
+       var response = await http.get(url, headers: headers);
+       print(response.statusCode);
+       print(jsonDecode(response.body));
+
+       if (response.statusCode == 200) {
+
+         List<ChildHeightWeightData> dataList = [];
+         List<dynamic> jsonList = jsonDecode(response.body);
+
+         for (var jsonObj in jsonList) {
+           // Create a DataObject instance
+           ChildHeightWeightData dataObject = ChildHeightWeightData.fromJson(jsonObj);
+           dataList.add(dataObject);
+         }
+
+         print("====>>>>>");
+
+         return dataList;
+       } else {
+         return null;
+       }
+     } catch (e) {
+       log(e.toString());
+     }
+     return null;
+   }
+
+
+   Future<List<ChildHeightWeightData>?> getChildWeightData(String user_id) async {
+     try {
+       _sharedPreferences = await SharedPreferences.getInstance();
+       String token = _sharedPreferences.getString(AppConstants.TOKEN)!;
+
+       var url = Uri.parse("$API_LINK/children/health/weight/$user_id");
+
+       final headers = <String, String>{
+         'Content-Type': 'application/json; charset=UTF-8',
+         'Authorization': "Bearer $token"
+       };
+
+       var response = await http.get(url, headers: headers);
+       print(response.statusCode);
+       print(jsonDecode(response.body));
+
+       if (response.statusCode == 200) {
+
+         List<ChildHeightWeightData> dataList = [];
+         List<dynamic> jsonList = jsonDecode(response.body);
+
+         for (var jsonObj in jsonList) {
+           // Create a DataObject instance
+           ChildHeightWeightData dataObject = ChildHeightWeightData.fromJson(jsonObj);
+           dataList.add(dataObject);
+         }
+
+         print("====>>>>>");
+
+         return dataList;
+       } else {
+         return null;
+       }
+     } catch (e) {
+       log(e.toString());
+     }
+     return null;
+   }
+
+
+   Future<String?> addChildSupplementsDetails(String childId, String medicineIDs) async {
+     print(childId);
+     print(medicineIDs);
+
+     try {
+       _sharedPreferences = await SharedPreferences.getInstance();
+       String token = _sharedPreferences.getString(AppConstants.TOKEN)!;
+
+       var url = Uri.parse("$API_LINK/children/medicine");
+
+       final headers = <String, String>{
+         'Content-Type': 'application/json; charset=UTF-8',
+         'Authorization': "Bearer $token"
+       };
+
+       final json ='{"childrenId":"$childId","medicineIDs": $medicineIDs }';
+
        print(json);
 
        var response = await post(url, headers: headers, body: json);
@@ -960,4 +1098,103 @@ class ApiService {
      }
      return null;
    }
+
+
+   Future<String?> addChildVaccinationDetails(String childId, String medicineIDs) async {
+     print(childId);
+     print(medicineIDs);
+
+     try {
+       _sharedPreferences = await SharedPreferences.getInstance();
+       String token = _sharedPreferences.getString(AppConstants.TOKEN)!;
+
+       var url = Uri.parse("$API_LINK/children/vaccination");
+
+       final headers = <String, String>{
+         'Content-Type': 'application/json; charset=UTF-8',
+         'Authorization': "Bearer $token"
+       };
+
+       final json ='{"childrenId":"$childId","vaccinationIDs": $medicineIDs }';
+
+       print(json);
+
+       var response = await post(url, headers: headers, body: json);
+       print(response.statusCode);
+       print(response.body);
+
+       return response.statusCode.toString();
+
+     } catch (e) {
+       log(e.toString());
+     }
+     return null;
+   }
+
+
+   Future<UserProfileGS?> getUserProfile() async {
+     try {
+       _sharedPreferences = await SharedPreferences.getInstance();
+       String token = _sharedPreferences.getString(AppConstants.TOKEN)!;
+
+       var url = Uri.parse("$API_LINK/user/dashboard/profile");
+
+       final headers = <String, String>{
+         'Content-Type': 'application/json; charset=UTF-8',
+         'Authorization': "Bearer $token"
+       };
+
+       var response = await http.get(url, headers: headers);
+       print(response.statusCode);
+       print(response.body);
+
+       if (response.statusCode == 200) {
+         UserProfileGS user_data = UserProfileGS.fromJson(jsonDecode(response.body));
+
+         return user_data;
+       } else {
+         return null;
+       }
+     } catch (e) {
+       log(e.toString());
+     }
+     return null;
+   }
+
+
+   Future<String?> updateUserProfile(String name, String mobile, String email, String aadhar) async {
+     try {
+       _sharedPreferences = await SharedPreferences.getInstance();
+       String token = _sharedPreferences.getString(AppConstants.TOKEN)!;
+
+       var url = Uri.parse("$API_LINK/user/dashboard/profile-update");
+
+       final headers = <String, String>{
+         'Content-Type': 'application/json; charset=UTF-8',
+         'Authorization': "Bearer $token"
+       };
+
+       print(name);
+       print(mobile);
+       print(email);
+       print(aadhar);
+
+       final json = '{ "name":"$name","mobile":"$mobile","email":"$email", "aadhar":"$aadhar"}';
+
+       print(json);
+
+       var response = await post(url, headers: headers, body: json);
+       print(response.statusCode);
+       print(response.body);
+       if (response.statusCode == 201) {
+         return response.statusCode.toString();
+       } else {
+         return null;
+       }
+     } catch (e) {
+       log(e.toString());
+     }
+     return null;
+   }
+
 }

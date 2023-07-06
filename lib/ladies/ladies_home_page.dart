@@ -85,7 +85,7 @@ class _LadiesHomePageState extends State<LadiesHomePage> {
 
       age_ref1 = eng_lang == true ? "Adolescent girls" : "किशोरियां";
       age_ref2 = eng_lang == true ? "Pregnant Women" : "गर्भवती महिला";
-      age_ref3 = eng_lang == true ? "Lactating Mother" : "स्तनपान कराने वाली माँ";
+      age_ref3 = eng_lang == true ? "Women (18-45 Age)" : "महिला (18-45 Age)";
 
       total_women_1 = AppTranslations.of(context)!.text("total") + " : 0";
       total_women_2 = AppTranslations.of(context)!.text("total") + " : 0";
@@ -93,7 +93,7 @@ class _LadiesHomePageState extends State<LadiesHomePage> {
 
       for(var item in list) {
 
-        if(item.name! == "Lactating Mother") {
+        if(item.name! == "Women (18-45 Age)") {
           women_cat_3 = item.id!;
           total_women_3 = AppTranslations.of(context)!.text("total") + " : ${item.womenCount!}";
 
@@ -119,7 +119,7 @@ class _LadiesHomePageState extends State<LadiesHomePage> {
 
         }
 
-        if(item.name! == "Adolescent girls and Lady (15-45 Age)") {
+        if(item.name!.trim() == "Adolescent girls") {
           women_cat_1 = item.id!;
           total_women_1 = AppTranslations.of(context)!.text("total") + " : ${item.womenCount!}";
 
@@ -137,6 +137,8 @@ class _LadiesHomePageState extends State<LadiesHomePage> {
       print(women_cat_1);
       print(women_cat_2);
       print(women_cat_3);
+
+
     });
   }
 

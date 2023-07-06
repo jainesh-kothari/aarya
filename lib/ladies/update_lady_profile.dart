@@ -114,9 +114,9 @@ class _UpdateNewladiesState extends State<UpdateNewladies> {
       _chosenCaste = user_details!.cast.toString();
       // _chosenCategoryId = user_details!.categoryId.toString();
 
-      String date = user_details!.dOB.toString().toString().substring(0,10);
-      var data = format.format(DateTime.parse(date));
-      dob_controller.text = data.toString();
+     // String date = user_details!.dOB.toString().toString().substring(0,10);
+     // var data = format.format(DateTime.parse(date));
+     // dob_controller.text = data.toString();
       married = user_details!.maritalStatus.toString();
 
       bool? is_minority = user_details!.isReligiousMinority;

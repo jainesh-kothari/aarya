@@ -27,6 +27,7 @@ class _HomePageState extends State<HomePage> {
  late SharedPreferences _sharedPreferences;
  bool is_arya = false;
  bool is_gnm = false;
+ bool is_sathin = false;
 
  @override
   void initState() {
@@ -42,6 +43,7 @@ class _HomePageState extends State<HomePage> {
    setState(() {
      is_arya = _sharedPreferences.getBool(AppConstants.IS_ARYA)!;
      is_gnm = _sharedPreferences.getBool(AppConstants.IS_GNM)!;
+     is_sathin = _sharedPreferences.getBool(AppConstants.IS_SATHIN)!;
    });
 
  }
@@ -180,8 +182,14 @@ class _HomePageState extends State<HomePage> {
 
                       child: InkWell(
                         onTap: (){
-                          Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => LadiesSelfHelpListview()));
-                        },
+
+
+                          if(is_sathin) {
+                            Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => LadiesSelfHelpListview()));
+                          } else{
+                            Fluttertoast.showToast(msg: "User not register as self help group");
+                          }
+                          },
                         child: Column(
 
                           children: [

@@ -278,7 +278,7 @@ class _AddNewChildrenState extends State<AddNewChildren> {
                                     child: child!,
                                   );
                                 },
-                                firstDate: DateTime(1900),
+                                firstDate: DateTime(2017),
                                 initialDate: currentValue ?? DateTime.now(),
                                 lastDate: DateTime.now());
                             return picked;
