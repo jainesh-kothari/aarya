@@ -26,8 +26,8 @@ class ChildHealthData {
 
 class ChildHealthDataData {
   String? id;
-  int? height;
-  int? weight;
+  dynamic? height;
+  dynamic? weight;
   String? createdAT;
 
   ChildHealthDataData({this.id, this.height, this.weight, this.createdAT});

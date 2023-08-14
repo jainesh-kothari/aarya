@@ -67,6 +67,7 @@ class AppConstants {
   static const String USER_MOBILE_NUMBER = "user_mobile_number";
   static const String EMAIL = "email";
   static const String ADDRESS = "address";
+  static const String CENTERID = "centerId";
 
 
   static final String IS_FIRST_TIME_LOGIN = "is_first_time_login";

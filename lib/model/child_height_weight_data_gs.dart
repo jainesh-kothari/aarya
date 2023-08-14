@@ -1,6 +1,6 @@
 class ChildHeightWeightData {
-  int? height;
-  int? weight;
+  dynamic? height;
+  dynamic? weight;
   String? date;
   String? result;
 

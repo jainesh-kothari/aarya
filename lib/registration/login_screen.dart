@@ -191,6 +191,7 @@ class _LoginScreenState extends State<StatefulWidget> {
                               _sharedPreferences.setBool(AppConstants.IS_GNM, _loginResponse!.data!.user!.isGnm!);
                               _sharedPreferences.setBool(AppConstants.IS_SATHIN, _loginResponse!.data!.user!.is_sathin!);
                               _sharedPreferences.setString(AppConstants.TOKEN, _loginResponse!.data!.token.toString());
+                              _sharedPreferences.setString(AppConstants.CENTERID, _loginResponse!.data!.user!.centerId.toString());
 
                               var name = _loginResponse!.data!.user!.firstName.toString() + " " + _loginResponse!.data!.user!.middleName.toString() + " " + _loginResponse!.data!.user!.lastName.toString();
 

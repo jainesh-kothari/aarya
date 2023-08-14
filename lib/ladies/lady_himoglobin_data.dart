@@ -2,6 +2,7 @@
 import 'package:arya/language/app_translations.dart';
 import 'package:arya/libary/api_service.dart';
 import 'package:arya/model/child_height_weight_data_gs.dart';
+import 'package:arya/model/lady_himbolobin_gs.dart';
 import 'package:arya/util/appcontants.dart';
 import 'package:draw_graph/draw_graph.dart';
 import 'package:draw_graph/models/feature.dart';
@@ -9,26 +10,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
-class ChildrenHeightData extends StatefulWidget {
+class LadyHemoglobinDetails extends StatefulWidget {
 
   String? userId;
-  ChildrenHeightData(this.userId);
+  LadyHemoglobinDetails(this.userId);
 
   @override
-  _ChildrenChildrenHeightDataState createState() => _ChildrenChildrenHeightDataState(this.userId);
+  _LadyHemoglobinDetailsState createState() => _LadyHemoglobinDetailsState(this.userId);
 }
 
-class _ChildrenChildrenHeightDataState extends State<ChildrenHeightData> {
-
+class _LadyHemoglobinDetailsState extends State<LadyHemoglobinDetails> {
 
   String? userId;
-  _ChildrenChildrenHeightDataState(this.userId);
-
+  _LadyHemoglobinDetailsState(this.userId);
 
   AppConstants api = AppConstants();
 
-  late Future<List<ChildHeightWeightData>?> _height_list;
-  List<ChildHeightWeightData>? list = [];
+  late Future<List<LadyHemoglobinData>?> _hemoglobin_list;
+  List<LadyHemoglobinData>? list = [];
 
   List<double> feature_data =[];
   List<String> date_list =[];
@@ -43,41 +42,34 @@ class _ChildrenChildrenHeightDataState extends State<ChildrenHeightData> {
   }
 
   _getData() async {
-    _height_list = ApiService().getChildHeightData(userId.toString());
-     list = await _height_list;
+    _hemoglobin_list = ApiService().getLadyHemoglobinData(userId.toString());
+    list = await _hemoglobin_list;
 
     list!.sort((b, a) {
-      DateTime dateTimeA = DateTime.parse(a.date.toString());
-      DateTime dateTimeB = DateTime.parse(b.date.toString());
+      DateTime dateTimeA = DateTime.parse(a.createdAT.toString());
+      DateTime dateTimeB = DateTime.parse(b.createdAT.toString());
       return dateTimeA.compareTo(dateTimeB);
     });
 
     for (int i = 0; i < list!.length; i++) {
       if (i <= 4) {
-        int? height = list![i].height;
-        double hei = (height! / 100);
+        int? weight = list![i].hemoglobin;
+        double hei = (weight! / 100);
         feature_data.add(hei);
 
-        DateTime date = DateTime.parse(list![i].date.toString());
+        DateTime date = DateTime.parse(list![i].createdAT.toString());
         String formattedDate = DateFormat('d MMMM').format(date);
         date_list.add(formattedDate);
       }
     }
 
     Feature feature = Feature(
-      title: "last ${feature_data.length} Height Graph",
+      title: "last ${feature_data.length} Hemoglobin Graph",
       color: Colors.blue,
       data: feature_data,
     );
 
-    Feature feature2 = Feature(
-      title: "last ${feature_data.length} Height Graph",
-      color: Colors.green,
-      data: feature_data,
-    );
-
     features.add(feature);
-    features.add(feature2);
   }
 
   @override
@@ -86,25 +78,23 @@ class _ChildrenChildrenHeightDataState extends State<ChildrenHeightData> {
 
     return Scaffold(
 
-      appBar: AppBar(
-        flexibleSpace: Container(
-          decoration:  BoxDecoration(
-            gradient: api.gradient(),
+        appBar: AppBar(
+          flexibleSpace: Container(
+            decoration:  BoxDecoration(
+              gradient: api.gradient(),
+            ),
           ),
+          title: Text(AppTranslations.of(context)!.text ("app_name")),
+          centerTitle: true,
         ),
-        title: Text(AppTranslations.of(context)!.text ("app_name")),
-        centerTitle: true,
-      ),
 
-      body: SafeArea(
-          child: SingleChildScrollView(
+        body: SafeArea(
+            child: SingleChildScrollView(
               child: Column(
                 children: [
-                  FutureBuilder<List<ChildHeightWeightData>?>(
-                      future: _height_list,
+                  FutureBuilder<List<LadyHemoglobinData>?>(
+                      future: _hemoglobin_list,
                       builder: (context, snapshot) {
-                        print(snapshot.hasData);
-                        print(list!.length);
 
                         if (snapshot.connectionState == ConnectionState.waiting) {
                           return Center(child: Padding(
@@ -113,11 +103,8 @@ class _ChildrenChildrenHeightDataState extends State<ChildrenHeightData> {
                           ));
                         }
 
-                        if (list!.length == 0) {
-                          return const Center(child: Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Text("No Data Found",style: TextStyle(fontSize: 18),),
-                          ));
+                        if (!snapshot.hasData) {
+                          return const Center(child: Text("No Data Found"));
                         }
 
 
@@ -131,7 +118,7 @@ class _ChildrenChildrenHeightDataState extends State<ChildrenHeightData> {
                                 DataTable(
                                   columns: [
                                     DataColumn(label: Text('Date')),
-                                    DataColumn(label: Text('Height')),
+                                    DataColumn(label: Text('Hemoglobin')),
                                     DataColumn(label: Text('Result')),
                                   ],
                                   rows: List.generate(
@@ -140,11 +127,11 @@ class _ChildrenChildrenHeightDataState extends State<ChildrenHeightData> {
                                         DataRow(
                                           cells: [
                                             DataCell(
-                                                Text(DateFormat('d MMMM yyyy').format(DateTime.parse(list![index].date.toString())))),
+                                                Text(DateFormat('d MMMM yyyy').format(DateTime.parse(list![index].createdAT.toString())))),
                                             DataCell(
-                                                Text(list![index].height.toString())),
+                                                Text(list![index].hemoglobin.toString())),
                                             DataCell(
-                                                Text(list![index].result.toString())),
+                                                Text(list![index].growthStatusName.toString())),
                                           ],
                                         ),
                                   ),
@@ -170,7 +157,6 @@ class _ChildrenChildrenHeightDataState extends State<ChildrenHeightData> {
                                     ),
                                   ),
                                 ),
-
                               ],
                             ),
                           ),
@@ -181,8 +167,8 @@ class _ChildrenChildrenHeightDataState extends State<ChildrenHeightData> {
 
                 ],
               ),
-          )
-    ));
+            )
+        ));
   }
 
 }

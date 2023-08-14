@@ -52,12 +52,12 @@ class _ChildHomePageState extends State<ChildHomePage> {
   @override
   void initState()  {
     super.initState();
-    _getData();
+    _getData(context);
   }
 
-  _getData() async {
+  _getData(BuildContext context) async {
 
-    _dashboard = (await ApiService().getChildDashBoard()) as ChildDashBoardDetils;
+    _dashboard = (await ApiService().getChildDashBoard(context)) as ChildDashBoardDetils;
     _sharedPreferences = await SharedPreferences.getInstance();
 
     setState(() {
@@ -108,6 +108,7 @@ class _ChildHomePageState extends State<ChildHomePage> {
       }
 
       visible = false;
+
     });
   }
 
@@ -271,7 +272,7 @@ class _ChildHomePageState extends State<ChildHomePage> {
                                     const Icon(Icons.circle, color: Colors.yellow, size: 15,),
                                     Text(" : $medium_child_2  "),
                                     const Icon(Icons.circle, color: Colors.green, size: 15,),
-                                    Text(" : $normal_child_3 "),
+                                    Text(" : $normal_child_2 "),
                                   ],
                                 ),
                               ),
@@ -363,7 +364,7 @@ class _ChildHomePageState extends State<ChildHomePage> {
                                     const Icon(Icons.circle, color: Colors.yellow, size: 15,),
                                     Text(" : $medium_child_3  "),
                                     const Icon(Icons.circle, color: Colors.green, size: 15,),
-                                    Text(" : $normal_child_2 "),
+                                    Text(" : $normal_child_3 "),
                                   ],
                                 ),
                               ),

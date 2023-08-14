@@ -1,98 +1,141 @@
 
 import 'package:arya/libary/api_service.dart';
 import 'package:arya/model/child_dashboard_model.dart';
+import 'package:arya/model/women_dashboard_model.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../language/app_translations.dart';
 import '../libary/sector.dart';
 import '../util/appcontants.dart';
 
-class ChartHomePage extends StatefulWidget {
-  const ChartHomePage({Key? key}) : super(key: key);
+class LadiesDashBoard extends StatefulWidget {
+  const LadiesDashBoard({Key? key}) : super(key: key);
 
   @override
-  PieChartWidget createState() => PieChartWidget();
+  LadiesDashBoardWidget createState() => LadiesDashBoardWidget();
 }
 
-class PieChartWidget extends State<ChartHomePage> {
+class LadiesDashBoardWidget extends State<LadiesDashBoard> {
 
-  List<ChildDashBoardUserAgeRef> dasboardList = [];
+  late WomenHomePageModel _dashboard;
+  late List<WomenHomePageModelData> list;
 
-  int group1Total = 0;
-  int group1Medium = 0;
-  int group1Normal = 0;
-  int group1Low = 0;
+  String total_women_1 ="";
+  String total_women_2 ="";
+  String total_women_3 ="";
 
-  int group2Total = 0;
-  int group2Medium = 0;
-  int group2Normal = 0;
-  int group2Low = 0;
+  String women_cat_1 ="";
+  String women_cat_2 ="";
+  String women_cat_3 ="";
 
-  int group3Total = 0;
-  int group3Medium = 0;
-  int group3Normal = 0;
-  int group3Low = 0;
+  String high_women_1 ="0";
+  String high_women_2 ="0";
+  String high_women_3 ="0";
 
-  int group4Total = 0;
-  int group4Medium = 0;
-  int group4Normal = 0;
-  int group4Low = 0;
+  String medium_women_1 ="0";
+  String medium_women_2 ="0";
+  String medium_women_3 ="0";
 
-  getDetails() async {
+  String low_women_1 ="0";
+  String low_women_2 ="0";
+  String low_women_3 ="0";
 
-    dasboardList = (await ApiService().getChildDashBoardUserAgeRef())!;
+  double total_high_count = 0;
+  double total_medium_count = 0;
+  double total_low_count = 0;
+  double total_count = 0;
+
+  late bool eng_lang;
+  bool visible = true;
+
+
+  getDetails(BuildContext context) async {
+
+    _dashboard = (await ApiService().getWomenDashBoard(context)) as WomenHomePageModel;
+
+    list = _dashboard.data!;
 
     setState(() {
 
-      for(int i= 0; i< dasboardList.length;i++) {
+      total_women_1 = AppTranslations.of(context)!.text("total") + " : 0";
+      total_women_2 = AppTranslations.of(context)!.text("total") + " : 0";
+      total_women_3 = AppTranslations.of(context)!.text("total") + " : 0";
 
-        if(dasboardList[i].name == "GROUP 1") {
-          group1Total = dasboardList[i].totalChildren!;
-          group1Normal = dasboardList[i].normal!;
-          group1Medium = dasboardList[i].medium!;
-          group1Low = dasboardList[i].low!;
+      for(var item in list) {
+
+        if(item.name! == "Women (18-45 Age)") {
+          women_cat_3 = item.id!;
+          total_women_3 = AppTranslations.of(context)!.text("total") + " : ${item.womenCount!}";
+
+          int? i = item.veryHighCount;
+          int? j = item.highCount;
+
+          high_women_3 = "${i! + j!}";
+          medium_women_3 = "${item.lowCount}";
+          low_women_3 = "${item.veryLow}";
+
+          total_count = total_count + item.womenCount!;
+
+          total_high_count = total_high_count + i! + j!;
+          total_medium_count = total_medium_count + item.lowCount!;
+          total_low_count = total_low_count + item.veryLow!;
 
         }
 
-        if(dasboardList[i].name == "GROUP 2") {
-          group2Total = dasboardList[i].totalChildren!;
-          group2Normal = dasboardList[i].normal!;
-          group2Medium = dasboardList[i].medium!;
-          group2Low = dasboardList[i].low!;
+        if(item.name! == "Pregnant Women") {
+          women_cat_2 = item.id!;
+          total_women_2 = AppTranslations.of(context)!.text("total") +" : ${item.womenCount!}";
 
+          int? i = item.veryHighCount;
+          int? j = item.highCount;
+
+          high_women_2 = "${i! + j!}";
+          medium_women_2 = "${item.lowCount}";
+          low_women_2 = "${item.veryLow}";
+          total_count = total_count + item.womenCount!;
+          total_high_count = total_high_count + i! + j!;
+          total_medium_count = total_medium_count + item.lowCount!;
+          total_low_count = total_low_count + item.veryLow!;
         }
 
-        if(dasboardList[i].name == "GROUP 3") {
-          group3Total = dasboardList[i].totalChildren!;
-          group3Normal = dasboardList[i].normal!;
-          group3Medium = dasboardList[i].medium!;
-          group3Low = dasboardList[i].low!;
+        if(item.name!.trim() == "Adolescent girls") {
+          women_cat_1 = item.id!;
+          total_women_1 = AppTranslations.of(context)!.text("total") + " : ${item.womenCount!}";
 
+          int? i = item.veryHighCount;
+          int? j = item.highCount;
+
+          high_women_1 = "${i! + j!}";
+          medium_women_1 = "${item.lowCount}";
+          low_women_1 = "${item.veryLow}";
+          total_count = total_count + item.womenCount!;
+          total_high_count = total_high_count + i! + j!;
+          total_medium_count = total_medium_count + item.lowCount!;
+          total_low_count = total_low_count + item.veryLow!;
         }
       }
 
-      group4Total = group3Total + group2Total + group1Total;
-      group4Normal = group3Normal + group2Normal + group1Normal;
-      group4Medium = group3Medium + group2Medium + group1Medium;
-      group4Low = group3Low + group2Low + group1Low;
-    });
+      visible = false;
 
+    });
   }
 
   List<Sector> get industrySectors {
     return [
       Sector(
           color: Colors.red,
-          value: group1Low.toDouble(),
+          value: double.parse(high_women_1),
           title: ''),
       Sector(
           color: Colors.green,
-          value: group1Normal.toDouble(),
+          value: double.parse(medium_women_1),
           title: ''),
       Sector(
           color: Colors.orange,
-          value: group1Medium.toDouble(),
+          value: double.parse(low_women_1),
           title: ''),
     ];
   }
@@ -101,15 +144,15 @@ class PieChartWidget extends State<ChartHomePage> {
     return [
       Sector(
           color: Colors.red,
-          value: group2Low.toDouble(),
+          value: double.parse(high_women_2),
           title: ''),
       Sector(
           color: Colors.green,
-          value: group2Normal.toDouble(),
+          value:double.parse(medium_women_2),
           title: ''),
       Sector(
           color: Colors.orange,
-          value: group2Medium.toDouble(),
+          value: double.parse(low_women_2),
           title: ''),
     ];
   }
@@ -118,15 +161,15 @@ class PieChartWidget extends State<ChartHomePage> {
     return [
       Sector(
           color: Colors.red,
-          value: group3Low.toDouble(),
+          value: double.parse(high_women_3),
           title: ''),
       Sector(
           color: Colors.green,
-          value: group3Normal.toDouble(),
+          value: double.parse(medium_women_3),
           title: ''),
       Sector(
           color: Colors.orange,
-          value: group3Medium.toDouble(),
+          value: double.parse(low_women_3),
           title: ''),
     ];
   }
@@ -135,15 +178,15 @@ class PieChartWidget extends State<ChartHomePage> {
     return [
       Sector(
           color: Colors.red,
-          value: group4Low.toDouble(),
+          value: total_high_count,
           title: ''),
       Sector(
           color: Colors.green,
-          value: group4Normal.toDouble(),
+          value: total_medium_count,
           title: ''),
       Sector(
           color: Colors.orange,
-          value: group4Medium.toDouble(),
+          value: total_low_count,
           title: ''),
     ];
   }
@@ -154,7 +197,7 @@ class PieChartWidget extends State<ChartHomePage> {
   @override
   void initState() {
     super.initState();
-    getDetails();
+    getDetails(context);
   }
 
   @override
@@ -199,8 +242,7 @@ class PieChartWidget extends State<ChartHomePage> {
                               padding: const EdgeInsets.all(8.0),
                               child: Column(
                                 children: [
-                                  Text("Age",style: style,),
-                                  Text("(0-6 Month)",style: style,),
+                                  Text("Adolescent girls",style: style,),
                                 ],
                               ),
                             ),
@@ -216,8 +258,7 @@ class PieChartWidget extends State<ChartHomePage> {
                               padding: const EdgeInsets.all(5.0),
                               child: Column(
                                 children: [
-                                  Text("Age",style: style,),
-                                  Text("(7 Month-3 Year)",style: style,),
+                                  Text("Pregnant Women",style: style,),
                                 ],
                               ),
                             ),
@@ -232,8 +273,7 @@ class PieChartWidget extends State<ChartHomePage> {
                               padding: const EdgeInsets.all(8.0),
                               child: Column(
                                 children: [
-                                  Text("Age",style: style,),
-                                  Text("(3 - 6 Year)",style: style,),
+                                  Text("Women (18-45 Age)",style: style,),
                                 ],
                               ),
                             ),
@@ -252,7 +292,7 @@ class PieChartWidget extends State<ChartHomePage> {
                   children: [
 
                     Flexible(
-                        flex: 3,
+                        flex: 5,
                         child: Card(
                           child: Column(
 
@@ -266,12 +306,9 @@ class PieChartWidget extends State<ChartHomePage> {
                                         centerSpaceRadius: 25.0,
                                       ))),
 
-                              Center(
-                                  child: Text("Total",style: style,)
-                              ),
 
                               Center(
-                                  child: Text("$group1Total",style: style,)
+                                  child: Text("${total_women_1}",style: style,)
                               ),
 
                               SizedBox(height: 10,)
@@ -283,7 +320,7 @@ class PieChartWidget extends State<ChartHomePage> {
                         )),
 
                     Flexible(
-                        flex: 3,
+                        flex: 5,
                         child: Card(
                           child: Column(
 
@@ -297,12 +334,9 @@ class PieChartWidget extends State<ChartHomePage> {
                                         centerSpaceRadius: 25.0,
                                       ))),
 
-                              Center(
-                                  child: Text("Total",style: style,)
-                              ),
 
                               Center(
-                                  child: Text("$group2Total",style: style,)
+                                  child: Text("${total_women_2}",style: style,)
                               ),
 
                               SizedBox(height: 10,)
@@ -314,7 +348,7 @@ class PieChartWidget extends State<ChartHomePage> {
                         )),
 
                     Flexible(
-                        flex: 3,
+                        flex: 5,
                         child: Card(
                           child: Column(
 
@@ -328,12 +362,9 @@ class PieChartWidget extends State<ChartHomePage> {
                                         centerSpaceRadius: 25.0,
                                       ))),
 
-                              Center(
-                                  child: Text("Total",style: style,)
-                              ),
 
                               Center(
-                                  child: Text("$group3Total",style: style,)
+                                  child: Text("${total_women_3}",style: style,)
                               ),
 
                               SizedBox(height: 10,)
@@ -385,7 +416,7 @@ class PieChartWidget extends State<ChartHomePage> {
                                     ),
                                   ),
                                   TextSpan(
-                                    text: "  Total : ${group4Total}",style: style,
+                                    text: "  Total : ${total_count}",style: style,
                                   ),
                                 ],
                               ),
@@ -404,7 +435,7 @@ class PieChartWidget extends State<ChartHomePage> {
                                     ),
                                   ),
                                   TextSpan(
-                                    text: "  Normal  : ${group4Normal}",style: style,
+                                    text: "  Normal  : ${total_medium_count}",style: style,
                                   ),
                                 ],
                               ),
@@ -425,7 +456,7 @@ class PieChartWidget extends State<ChartHomePage> {
                                     ),
                                   ),
                                   TextSpan(
-                                    text: "  MAM  : ${group4Medium}",style: style,
+                                    text: "  Low  : ${total_low_count}",style: style,
                                   ),
                                 ],
                               ),
@@ -444,15 +475,11 @@ class PieChartWidget extends State<ChartHomePage> {
                                     ),
                                   ),
                                   TextSpan(
-                                    text: "  SAM   : ${group4Low}",style: style,
+                                    text: "  High   : ${total_high_count}",style: style,
                                   ),
                                 ],
                               ),
                             ),
-
-
-
-
                           ],
                         ),
                       ),

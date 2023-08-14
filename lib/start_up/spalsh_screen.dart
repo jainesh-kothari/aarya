@@ -1,9 +1,13 @@
 
 import 'dart:async';
 import 'package:arya/language/application.dart';
+import 'package:arya/libary/api_service.dart';
+import 'package:arya/model/app_version_gs.dart';
 import 'package:arya/registration/home_page.dart';
 import 'package:arya/start_up/select_language.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../children/add_new_children.dart';
 import '../registration/login_screen.dart';
@@ -30,7 +34,38 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   @override
   void initState() {
     super.initState();
+    // getDetails();
     getLoginDetails();
+  }
+
+  getDetails() async {
+    AppVersionGS? response = await ApiService().getAndroidAppVersion();
+
+    if(response!.value.toString() != "v1"){
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('New Version Available'),
+            content: Text('A new version of the app is available on the Play Store. Update now to access new features and improvements.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  // Redirect the user to the Play Store for the update
+                  // You can use the 'url_launcher' package to open URLs
+                  // Example: await launch('PLAY_STORE_URL');
+                  Navigator.of(context).pop();
+                },
+                child: Text('Update Now'),
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      getLoginDetails();
+    }
+
   }
 
 
@@ -57,20 +92,30 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
     _sharedPreferences = await SharedPreferences.getInstance();
 
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+
+    String appName = packageInfo.appName;
+    String packageName = packageInfo.packageName;
+    String version = packageInfo.version;
+    String buildNumber = packageInfo.buildNumber;
+
+
+    print(appName);
+    print(packageName);
+    print("===$version");
+    print(buildNumber);
+
     setState(() {
 
     if(_sharedPreferences?.getBool(AppConstants.KEY_IS_LOGGEDIN) == null) {
       _sharedPreferences?.setBool(AppConstants.KEY_IS_LOGGEDIN, false);
     } else {
-      print("=========>>>>>>>>>>");
       print(_sharedPreferences?.getBool(AppConstants.KEY_IS_LOGGEDIN));
     }
 
     if(_sharedPreferences?.getString(AppConstants.SELECTED_LANGUAGE) == null) {
       _sharedPreferences?.setString(AppConstants.SELECTED_LANGUAGE, "English");
     }
-
-    print(_sharedPreferences?.getString(AppConstants.SELECTED_LANGUAGE));
 
     Timer(const Duration(seconds: 2), () => {
 

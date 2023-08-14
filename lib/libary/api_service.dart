@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:arya/ladies/add_new_lady_response.dart';
+import 'package:arya/model/app_version_gs.dart';
 import 'package:arya/model/caste_category.dart';
 import 'package:arya/model/child_category_gs.dart';
 import 'package:arya/model/child_dashboard.dart';
@@ -11,12 +12,15 @@ import 'package:arya/model/child_nutritional_intervention.dart';
 import 'package:arya/model/child_nutritional_suppliments.dart';
 import 'package:arya/model/child_vaccination_gs.dart';
 import 'package:arya/model/lady_health_model.dart';
+import 'package:arya/model/lady_himbolobin_gs.dart';
 import 'package:arya/model/lady_intervention_model.dart';
 import 'package:arya/model/lady_nutritional_model.dart';
 import 'package:arya/model/login_gs.dart';
 import 'package:arya/model/particular_child_data_gs.dart';
 import 'package:arya/model/profile_gs.dart';
+import 'package:arya/model/self_help_group_edit_gs.dart';
 import 'package:arya/model/self_help_group_list_view.dart';
+import 'package:arya/model/self_help_group_metting_list_gs.dart';
 import 'package:arya/model/self_help_group_model.dart';
 import 'package:arya/model/self_help_group_view.dart';
 import 'package:arya/model/suckle_lady_model.dart';
@@ -37,8 +41,10 @@ import '../model/vaccination.dart';
 import '../util/appcontants.dart';
 
 class ApiService {
-   static const String API_LINK = "http://34.125.174.14";
+   // static const String API_LINK = "http://34.125.174.14";
   // static const String API_LINK = "http://34.125.95.71";
+  static const String API_LINK = "http://34.125.16.196";
+
   late SharedPreferences _sharedPreferences;
 
   late BuildContext context;
@@ -325,7 +331,7 @@ class ApiService {
   }
 
 
-  Future<ChildDashBoardDetils?> getChildDashBoard() async {
+  Future<ChildDashBoardDetils?> getChildDashBoard(BuildContext context) async {
     try {
       _sharedPreferences = await SharedPreferences.getInstance();
       String token = _sharedPreferences.getString(AppConstants.TOKEN)!;
@@ -347,8 +353,8 @@ class ApiService {
          ChildDashBoardDetils child_dashboard = ChildDashBoardDetils.fromJson(jsonDecode(response.body));
         return child_dashboard;
       }else if (response.statusCode == 401) {
-        Fluttertoast.showToast(msg: "Please login again");
-      } if (response.statusCode == 404) {
+         goToLoginScreen(context);
+      } else if (response.statusCode == 404) {
         Fluttertoast.showToast(msg: "No data found");
       }else {
         return null;
@@ -474,6 +480,8 @@ class ApiService {
 
       var response = await post(url, headers: headers, body: json);
 
+      print(jsonDecode(response.body));
+
       if (response.statusCode == 201) {
         return response.statusCode.toString();
       } else {
@@ -539,7 +547,7 @@ class ApiService {
    }
 
 
-   Future<WomenHomePageModel?> getWomenDashBoard() async {
+   Future<WomenHomePageModel?> getWomenDashBoard(BuildContext context) async {
      try {
        _sharedPreferences = await SharedPreferences.getInstance();
        String token = _sharedPreferences.getString(AppConstants.TOKEN)!;
@@ -558,10 +566,10 @@ class ApiService {
 
 
        if (response.statusCode == 200) {
-         WomenHomePageModel women_dashboard = WomenHomePageModel.fromJson(jsonDecode(response.body));
-
-
-         return women_dashboard;
+           WomenHomePageModel women_dashboard = WomenHomePageModel.fromJson(jsonDecode(response.body));
+            return women_dashboard;
+       } else if (response.statusCode == 401) {
+         goToLoginScreen(context);
        } else {
          return null;
        }
@@ -571,6 +579,10 @@ class ApiService {
      return null;
    }
 
+
+    goToLoginScreen(BuildContext context1) {
+     Navigator.of(context1).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => LoginScreen()));
+   }
 
    Future<List<LadiesListviewModelData>?> getWomenList(String id) async {
      try {
@@ -721,7 +733,7 @@ class ApiService {
    }
 
 
-   Future<LadyHealthModelData?> addLadyHealthDetails(String id, String hemoglobin) async {
+   Future<LadyHealthModelData?> addLadyHealthDetails(String id, String hemoglobin, String date) async {
 
      try {
        _sharedPreferences = await SharedPreferences.getInstance();
@@ -734,7 +746,10 @@ class ApiService {
          'Authorization': "Bearer $token"
        };
 
-       final json = '{"womenId":"$id","height": 0,"weight": 0, "hemoglobin":$hemoglobin}';
+       final json = '{"womenId":"$id","height": 0,"weight": 0, "hemoglobin":$hemoglobin, "date":"$date"}';
+
+       print(url);
+       print(json);
 
        var response = await post(url, headers: headers, body: json);
        print(response.statusCode);
@@ -764,7 +779,7 @@ class ApiService {
        };
 
        var response = await http.get(url, headers: headers);
-
+       print(jsonDecode(response.body));
        if (response.statusCode == 200) {
          LadyNutritionalSupplement res = LadyNutritionalSupplement.fromJson(jsonDecode(response.body));
 
@@ -824,12 +839,7 @@ class ApiService {
 
        final json = '{"centerId":"$centerId","ladyClubName":"$ladyClubName","joiningClubDate":"$joiningClubDate","memberDetails":$memberDetails}';
        print(json);
-
        var response = await post(url, headers: headers, body: json);
-
-       print(jsonDecode(response.body));
-       print(response.statusCode);
-
 
        return response.statusCode.toString();
 
@@ -882,6 +892,9 @@ class ApiService {
        };
 
        var response = await http.get(url, headers: headers);
+
+       print(jsonDecode(response.body));
+       print(response.statusCode);
 
        if (response.statusCode == 200) {
          ChildDashBoardData club = ChildDashBoardData.fromJson(jsonDecode(response.body));
@@ -1197,4 +1210,292 @@ class ApiService {
      return null;
    }
 
+
+
+   Future<String?> addChildInterventionDetails(String childId, String foodIDs, double hemoglobin,
+   double THRdays, bool isOnSolidFoods) async {
+     print(childId);
+     print(foodIDs);
+
+     try {
+       _sharedPreferences = await SharedPreferences.getInstance();
+       String token = _sharedPreferences.getString(AppConstants.TOKEN)!;
+
+       var url = Uri.parse("$API_LINK/children/nutritional-intervention");
+
+       final headers = <String, String>{
+         'Content-Type': 'application/json; charset=UTF-8',
+         'Authorization': "Bearer $token"
+       };
+
+       final json ='{"childrenId":"$childId","hemoglobin":"$hemoglobin","isOnSolidFoods":${isOnSolidFoods},'
+           '"THRdays":$THRdays,"foodIDs": $foodIDs }';
+
+       print(json);
+
+       var response = await post(url, headers: headers, body: json);
+       print(response.statusCode);
+       print(response.body);
+
+       return response.statusCode.toString();
+
+     } catch (e) {
+       log(e.toString());
+     }
+     return null;
+   }
+
+
+
+
+   Future<List<LadyHemoglobinData>?> getLadyHemoglobinData(String id) async {
+     try {
+       _sharedPreferences = await SharedPreferences.getInstance();
+       String token = _sharedPreferences.getString(AppConstants.TOKEN)!;
+
+       var url = Uri.parse("$API_LINK/women/health/$id");
+
+       final headers = <String, String>{
+         'Content-Type': 'application/json; charset=UTF-8',
+         'Authorization': "Bearer $token"
+       };
+
+       var response = await http.get(url, headers: headers);
+       print(response.statusCode);
+       print(response.body);
+       if (response.statusCode == 200) {
+         LadyHemoglobinGS hemo_list = LadyHemoglobinGS.fromJson(jsonDecode(response.body));
+
+         return hemo_list.data;
+       } else {
+         return null;
+       }
+     } catch (e) {
+       log(e.toString());
+     }
+     return null;
+   }
+
+
+   Future<SelfHelpGroupGSData?> getSelfHelpGroupData(String id) async {
+     try {
+       _sharedPreferences = await SharedPreferences.getInstance();
+       String token = _sharedPreferences.getString(AppConstants.TOKEN)!;
+
+       var url = Uri.parse("$API_LINK/women/self-help-group/$id");
+
+       final headers = <String, String>{
+         'Content-Type': 'application/json; charset=UTF-8',
+         'Authorization': "Bearer $token"
+       };
+
+       var response = await http.get(url, headers: headers);
+       print(response.statusCode);
+       print(response.body);
+       if (response.statusCode == 200) {
+         SelfHelpGroupGS selfHelpGroup = SelfHelpGroupGS.fromJson(jsonDecode(response.body));
+
+         return selfHelpGroup.data;
+       } else {
+         return null;
+       }
+     } catch (e) {
+       log(e.toString());
+     }
+     return null;
+   }
+
+
+  Future<SelfHelpGroupMeetingGS?> getSelfHelpGroupMeetingData(String id) async {
+    try {
+      _sharedPreferences = await SharedPreferences.getInstance();
+      String token = _sharedPreferences.getString(AppConstants.TOKEN)!;
+
+      var url = Uri.parse("$API_LINK/women/self-help-group/$id");
+
+      final headers = <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': "Bearer $token"
+      };
+
+      var response = await http.get(url, headers: headers);
+      print(response.statusCode);
+      print(response.body);
+      if (response.statusCode == 200) {
+        SelfHelpGroupMeetingGS selfHelpGroup = SelfHelpGroupMeetingGS.fromJson(jsonDecode(response.body));
+
+        return selfHelpGroup!;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      log(e.toString());
+    }
+    return null;
+  }
+
+
+  Future<String?> addSelfHelpGroupMeeting(String selfHelpGroupId, String dateOfMetting, String topicOfMeeting) async {
+    try {
+      _sharedPreferences = await SharedPreferences.getInstance();
+      String token = _sharedPreferences.getString(AppConstants.TOKEN)!;
+
+      var url = Uri.parse("$API_LINK/women/self-help-Group/meeting");
+
+      final headers = <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': "Bearer $token"
+      };
+
+      print(selfHelpGroupId);
+      print(dateOfMetting);
+      print(selfHelpGroupId);
+
+      final json = '{ "selfHelpGroupId":"$selfHelpGroupId","dateOfMetting":"$dateOfMetting","topicOfMeeting":"$topicOfMeeting"}';
+
+      print(json);
+
+      var response = await post(url, headers: headers, body: json);
+      print(response.statusCode);
+      print(response.body);
+      if (response.statusCode == 201) {
+        return response.statusCode.toString();
+      } else {
+        return null;
+      }
+    } catch (e) {
+      log(e.toString());
+    }
+    return null;
+  }
+
+  Future<String?> updateWomenSelfHelpGroup(String centerId,String ladyClubName, String joiningClubDate,
+      List<SelfHelpGroupModelWithId> memberDetails, String id) async {
+    try {
+      _sharedPreferences = await SharedPreferences.getInstance();
+      String token = _sharedPreferences.getString(AppConstants.TOKEN)!;
+
+      var url = Uri.parse("$API_LINK/women/self-help-group/$id");
+
+      final headers = <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': "Bearer $token"
+      };
+
+
+      final json = '{"centerId":"$centerId","ladyClubName":"$ladyClubName","joiningClubDate":"$joiningClubDate","memberDetails":$memberDetails}';
+      print(json);
+      var response = await http.patch(url, headers: headers, body: json);
+
+      return response.statusCode.toString();
+
+    } catch (e) {
+      log(e.toString());
+    }
+    return null;
+  }
+
+
+  Future<String?> deleteSelfHelpGroupMember(String id) async {
+    try {
+      _sharedPreferences = await SharedPreferences.getInstance();
+      String token = _sharedPreferences.getString(AppConstants.TOKEN)!;
+
+      var url = Uri.parse("$API_LINK/women/self-help-group/$id");
+
+      final headers = <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': "Bearer $token"
+      };
+
+      var response = await delete(url, headers: headers);
+
+      return response.statusCode.toString();
+
+    } catch (e) {
+      log(e.toString());
+    }
+    return null;
+  }
+
+  Future<String?> deleteSelfHelpGroupMeeting(String id) async {
+    try {
+      _sharedPreferences = await SharedPreferences.getInstance();
+      String token = _sharedPreferences.getString(AppConstants.TOKEN)!;
+
+      var url = Uri.parse("$API_LINK/women/self-help-Group/groupMeeting/$id");
+
+      final headers = <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': "Bearer $token"
+      };
+
+      var response = await delete(url, headers: headers);
+      print(response);
+      print(response.statusCode.toString());
+      return response.statusCode.toString();
+
+    } catch (e) {
+      log(e.toString());
+    }
+    return null;
+  }
+
+  Future<String?> addSelfHelpGroupMeetingAttendance(String selfHelpGroupMeetingId, String jsonString) async {
+    try {
+      _sharedPreferences = await SharedPreferences.getInstance();
+      String token = _sharedPreferences.getString(AppConstants.TOKEN)!;
+
+      var url = Uri.parse("$API_LINK/women/self-help-Group/meeting/memberDetails");
+
+      final headers = <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': "Bearer $token"
+      };
+
+      final json = '{"selfHelpGroupMeetingId":"$selfHelpGroupMeetingId","memberDetails":$jsonString}';
+
+      print(json);
+
+      var response = await post(url, headers: headers, body: json);
+      print(response.statusCode);
+      print(response.body);
+      if (response.statusCode == 201) {
+        return response.statusCode.toString();
+      } else {
+        return null;
+      }
+    } catch (e) {
+      log(e.toString());
+    }
+    return null;
+  }
+
+
+  Future<AppVersionGS?> getAndroidAppVersion() async {
+    try {
+      _sharedPreferences = await SharedPreferences.getInstance();
+      String token = _sharedPreferences.getString(AppConstants.TOKEN)!;
+
+      var url = Uri.parse("$API_LINK/admin/system-config/android-version");
+
+      final headers = <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': "Bearer $token"
+      };
+
+      var response = await http.get(url, headers: headers);
+      print(response.statusCode);
+      print(response.body);
+      if (response.statusCode == 200) {
+        AppVersionGS appVersion = AppVersionGS.fromJson(jsonDecode(response.body));
+        return appVersion!;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      log(e.toString());
+    }
+    return null;
+  }
 }

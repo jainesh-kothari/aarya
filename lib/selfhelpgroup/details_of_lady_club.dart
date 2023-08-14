@@ -1,69 +1,68 @@
 
-import 'package:arya/children/add_new_children.dart';
-import 'package:arya/children/growth_monitaring.dart';
-import 'package:arya/children/nutrition_class.dart';
-import 'package:arya/children/tika_vavaran.dart';
-import 'package:arya/ladies/add_new_lady.dart';
-import 'package:arya/ladies/lady_nutrition_process.dart';
-import 'package:arya/model/self_help_group_model.dart';
-import 'package:arya/selfhelpgroup/add_self_help_group.dart';
-import 'package:arya/ladies/suckle_lady.dart';
+import 'dart:convert';
+import 'package:arya/model/self_help_group_metting_list_gs.dart';
 import 'package:arya/language/app_translations.dart';
 import 'package:arya/libary/api_service.dart';
 import 'package:arya/util/appcontants.dart';
-import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_switch/flutter_switch.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
-
-import '../model/get_child_gs.dart';
-import '../model/self_help_group_view.dart';
+import '../libary/util.dart';
 
 class LadiesGroupDetails extends StatefulWidget {
 
   String? id;
-  LadiesGroupDetails(this.id);
+  String? topic;
+  String? date;
+  List<SelfMemberDetails>? member_list;
+  LadiesGroupDetails(this.id, this.member_list, this.topic, this.date);
 
   @override
-  _LadiesGroupDetailsState createState() => _LadiesGroupDetailsState(this.id);
+  _LadiesGroupDetailsState createState() => _LadiesGroupDetailsState(this.id, this.member_list, topic, date);
 }
 
 class _LadiesGroupDetailsState extends State<LadiesGroupDetails> {
 
   String? id;
-  _LadiesGroupDetailsState(this.id);
+  String? topic;
+  String? date;
+  List<SelfMemberDetails>? member_list;
+  _LadiesGroupDetailsState(this.id, this.member_list, this.topic, this.date);
 
   AppConstants api = AppConstants();
   final format = DateFormat("dd-MM-yyyy");
   TextStyle style = const TextStyle(fontSize: 14, color: Colors.black,fontWeight: FontWeight.bold);
 
-  SelfHelpViewModelData? club_details;
-  List<MemberDetails> _member_list = [];
-  TextEditingController txt_date = TextEditingController(text:'');
-
-  List<bool> _check_list = [];
+  List<MeetingMemberDetails> _member_list = [];
+  bool visible = false;
 
   getDetails() async {
-    club_details = await ApiService().getSelfHelpGroupDetails(id!);
 
     setState(() {
-      _member_list = club_details!.memberDetails!;
-      txt_date.text = club_details!.joiningClubDate.toString();
 
-      _member_list.forEach((element) {_check_list.add(false); });
+      for(int i=0 ;i <member_list!.length;i++) {
+        MeetingMemberDetails memberDetails = new MeetingMemberDetails();
+
+        memberDetails.name = member_list![i].name;
+        memberDetails.designation = member_list![i].designation;
+        memberDetails.id = member_list![i].id;
+        memberDetails.attendence = false;
+
+        _member_list.add(memberDetails);
+      }
+
     });
-
-
-
-
   }
 
   @override
   void initState() {
     super.initState();
     getDetails();
+
+    print(id);
   }
 
 
@@ -83,225 +82,225 @@ class _LadiesGroupDetailsState extends State<LadiesGroupDetails> {
       ),
 
       body: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+          child: Stack(
+            children: [
 
-              Center(
-                child: Padding(
-                    padding: EdgeInsets.only(left: 8.0,top: 8.0),
-                    child: Text("Details of the monthly meeting of the women's club", style: style)),
-              ),
+             SingleChildScrollView(
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
 
-
-
-
-              Padding(
-                padding: const EdgeInsets.only(left: 8.0,top: 30.0),
-                child: Text("Date of meeting", style: style),
-              ),
-
-              Padding(
-                padding: const EdgeInsets.only(top:5.0,left: 8.0,right: 10,bottom:8),
-                child: DateTimeField(
-                  format: format,
-                   controller: txt_date,
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-                    enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color:  Color(AppConstants.GRAY_COLOR[4]))
-                    ),
-                    border: OutlineInputBorder(
-                        borderSide: BorderSide(color:  Color(AppConstants.GRAY_COLOR[4]))
-                    ),
-                  ),
-                  onShowPicker: (context, currentValue) async {
-                    DateTime? picked = await showDatePicker(
-                        context: context,
-                        builder: (BuildContext? context, Widget? child) {
-                          return Theme(
-                            data: ThemeData.dark().copyWith(
-                              colorScheme: ColorScheme.dark(
-                                primary: Color(AppConstants.BLUE_COLOR[0]),
-                                onPrimary: Colors.white,
-                                surface: Color(AppConstants.BLUE_COLOR[0]),
-                                onSurface: Colors.black,
-                              ),
-                              dialogBackgroundColor:Colors.white,
-                            ),
-                            child: child!,
-                          );
-                        },
-                        firstDate: DateTime.now(),
-                        initialDate: currentValue ?? DateTime.now(),
-                        lastDate: DateTime(2100));
-                    return picked;
-                  },
-                ),
-              ),
-
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8.0,top: 8.0),
-                    child: Text("Topic of Meeting", style: style),
-                  ),
-
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: DropdownButtonFormField<String>(
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
+                      Center(
+                        child: Padding(
+                            padding: EdgeInsets.only(left: 8.0,top: 8.0,bottom: 10),
+                            child: Text("Details of the monthly meeting of the women's club", style: style)),
                       ),
-                      isExpanded: true,
-                      focusColor:Colors.white,
-                      // value: _chosenValue,
-                      //elevation: 5,
-                      style: TextStyle(color: Colors.white),
-                      iconEnabledColor:Colors.black,
-                      items: <String>[
-                        'बाल विवाह अधिनियम - 2006',
-                        'दहेज़ निषेध अधिनियम - 1961',
-                        'राजस्थान डायन-प्रताड़ना निवारण अधिनियम - 2013',
-                        'गर्भधारण पूर्व एवं प्रसूति पूर्ण तकनीक अधिनियम - 1994',
-                        'घरेलू हिंसा से महिलाओ का सरक्षण अधिनियम - 2005',
-                        'महिलाओ का कार्यस्थल पर उत्पीड़न अधिनियम - 2013',
-                        'अन्य'
-                      ].map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value,style:TextStyle(color:Colors.black),),
-                        );
-                      }).toList(),
-                      hint:Text("Select the topic",
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500),
+
+                      const Divider(thickness: 1,color: Colors.grey,),
+
+
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 8.0,top: 5.0),
+                          child: Text("Date of meeting : ${date}", style: style),
+                        ),
                       ),
-                      onChanged: (String? value) {
-                        setState(() {
-                          // _chosenValue = value;
-                        });
-                      },
-                    ),
-                  ),
 
-                  SizedBox(height: 20,),
 
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8.0,top: 30.0),
-                    child: Text("Details of Member", style: style),
-                  ),
-
-                  SizedBox(height: 20,),
-
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: [
-
-                        Expanded(
-                          flex:3,
-                          child: Text("Name", style: style),
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 8.0,top: 20.0),
+                          child: Text("Topic of Meeting : ${topic}", style: style),
                         ),
+                      ),
 
-                        Expanded(
-                          flex:3,
-                          child: Text("Designation", style: style),
+
+                      SizedBox(height: 20,),
+
+                      const Divider(thickness: 1,color: Colors.grey,),
+
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 8.0,top: 5.0),
+                          child: Text("Details of Member", style: style),
                         ),
+                      ),
 
-                        Expanded(
-                          flex:3,
-                          child: Text("Attendance", style: style),
-                        ),
+                      const Divider(thickness: 1,color: Colors.grey,),
 
-                      ],
-                    ),
-                  ),
+                      SizedBox(height: 20,),
 
-
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      physics: ClampingScrollPhysics(),
-                      itemCount: _member_list.length,
-                      itemBuilder: (context, index) {
-                        return  Row(
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
                           children: [
 
                             Expanded(
                               flex:3,
-                              child: Text(_member_list[index].name.toString(), style: style),
+                              child: Text("Name", style: style),
                             ),
 
                             Expanded(
                               flex:3,
-                              child: Text(_member_list[index].designation.toString(), style: style),
+                              child: Text("Designation", style: style),
                             ),
 
                             Expanded(
                               flex:3,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: FlutterSwitch(
-                                  value: _check_list[index],
-                                  activeColor: Colors.green,
-                                  width: 60.0,
-                                  height: 30.0,
-                                  onToggle: (val) {
-                                    setState(() {
-                                      _check_list[index] = val;
-                                    });
-                                  },
-                                ),
-                              ),
+                              child: Text("Attendance", style: style),
                             ),
-
 
                           ],
-                        );
-                      },
-                    ),
-                  ),
+                        ),
+                      ),
+
+
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          physics: ClampingScrollPhysics(),
+                          itemCount: _member_list.length,
+                          itemBuilder: (context, index) {
+                            return  Row(
+                              children: [
+
+                                Expanded(
+                                  flex:3,
+                                  child: Text(_member_list[index].name.toString(), style: style),
+                                ),
+
+                                Expanded(
+                                  flex:3,
+                                  child: Text(_member_list[index].designation.toString(), style: style),
+                                ),
+
+                                Expanded(
+                                  flex:3,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: FlutterSwitch(
+                                      value: _member_list[index].attendence ?? false,
+                                      activeColor: Colors.green,
+                                      width: 60.0,
+                                      height: 30.0,
+                                      onToggle: (val) {
+                                        setState(() {
+                                          _member_list[index].attendence = val;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                ),
+
+
+                              ],
+                            );
+                          },
+                        ),
+                      ),
 
 
 
 
-                  InkWell(
-                    onTap: () {
+                      InkWell(
+                        onTap: () async {
 
-                    },
-                    child: Padding(
-                      padding:
-                      const EdgeInsets.only(left: 40.0, right: 40,top: 50),
-                      child: Container(
-                        height: 40,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                            gradient: api.gradient(),
-                            borderRadius: BorderRadius.circular(10),
-                            border: const Border(
-                              bottom: BorderSide(color: Colors.black),
-                              top: BorderSide(color: Colors.black),
-                              left: BorderSide(color: Colors.black),
-                              right: BorderSide(color: Colors.black),
-                            )),
-                        child: Center(
-                          child: Text(
-                            AppTranslations.of(context)!.text("save"),
-                            style: const TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 16,
-                                color: Colors.white),
+                          List<MeetingMemberDetails> present_member_list = [];
+
+                          for(int k=0; k < _member_list!.length; k++) {
+
+                            if(_member_list[k].attendence == true){
+                              present_member_list.add(_member_list[k]);
+                            }
+                          }
+
+                          List<Map<String, dynamic>> jsonList = present_member_list.map((member) => member.toJson()).toList();
+                          String jsonString = jsonEncode(jsonList);
+
+                          jsonString = jsonString.replaceAll('desination', 'designation');
+                          jsonString = jsonString.replaceAll('attendence', 'attendance');
+
+                          setState(() {
+                            visible = true;
+                          });
+
+                          String? response = await ApiService().addSelfHelpGroupMeetingAttendance(id.toString(), jsonString);
+
+                          setState(() {
+                            visible = false;
+                          });
+
+                          if (response == "201") {
+                            Alert(
+                              context: context,
+                              style: util().alertStyle,
+                              type: AlertType.success,
+                              title: "",
+                              desc: "Meeting added Successfully",
+                              buttons: [
+                                DialogButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    Navigator.pop(context);
+                                  },
+                                  color:
+                                  Color.fromRGBO(0, 179, 134, 1.0),
+                                  radius: BorderRadius.circular(0.0),
+                                  child: const Text(
+                                    "Okay",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20),
+                                  ),
+                                ),
+                              ],
+                            ).show();
+                          } else {
+                            Fluttertoast.showToast(
+                                msg: "Something went wrong");
+                          }
+
+                        },
+                        child: Padding(
+                          padding:
+                          const EdgeInsets.all(50),
+                          child: Container(
+                            height: 40,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                                gradient: api.gradient(),
+                                borderRadius: BorderRadius.circular(10),
+                                border: const Border(
+                                  bottom: BorderSide(color: Colors.black),
+                                  top: BorderSide(color: Colors.black),
+                                  left: BorderSide(color: Colors.black),
+                                  right: BorderSide(color: Colors.black),
+                                )),
+                            child: Center(
+                              child: Text(
+                                AppTranslations.of(context)!.text("save"),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 16,
+                                    color: Colors.white),
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ),
 
 
-            ]),
+                    ]),
+              ),
+
+              visible ? Container(
+                color: Colors.black.withOpacity(0.5),
+                child: const Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ) : Container()
+            ]
           )),
 
 

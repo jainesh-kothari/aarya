@@ -1,5 +1,6 @@
 
 import 'dart:io';
+import 'package:arya/children/child_home_page.dart';
 import 'package:arya/language/app_translations.dart';
 import 'package:arya/util/appcontants.dart';
 import 'package:flutter/material.dart';
@@ -690,7 +691,8 @@ class _AddNewChildrenState extends State<AddNewChildren> {
                                     onPressed: () {
                                       Navigator.pop(context);
                                       Navigator.pop(context);
-                                      // Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => ChildrenListView()));
+                                      Navigator.pop(context);
+                                      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => ChildHomePage()));
                                     },
                                     color: Color.fromRGBO(0, 179, 134, 1.0),
                                     radius: BorderRadius.circular(0.0),

@@ -1,4 +1,5 @@
 import 'package:arya/ladies/add_new_lady_response.dart';
+import 'package:arya/ladies/ladies_home_page.dart';
 import 'package:arya/language/app_translations.dart';
 import 'package:arya/model/caste_category.dart';
 import 'package:arya/model/category_of_cast.dart';
@@ -761,8 +762,8 @@ class _AddNewladiesState extends State<AddNewladies> {
                                   onPressed: () {
                                     Navigator.pop(context);
                                     Navigator.pop(context);
-                                    // Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => ChildrenListView()));
-                                  },
+                                    Navigator.pop(context);
+                                    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => LadiesHomePage()));  },
                                   color: Color.fromRGBO(0, 179, 134, 1.0),
                                   radius: BorderRadius.circular(0.0),
                                 ),

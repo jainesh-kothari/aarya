@@ -184,10 +184,10 @@ class _ChildrenListViewCategoryState extends State<ChildrenListViewCategory> {
                                       bottom:0,
                                       child: Container(
                                         width: 60,
-                                        color: todo!.isVerified != true ?  Colors.green : Colors.red,
-                                        child: const Padding(
+                                        color: todo!.isVerified == false ?  Colors.red : Colors.green,
+                                        child: Padding(
                                           padding: EdgeInsets.all(3.0),
-                                          child: Text("  Verified", style: TextStyle(
+                                          child: Text(todo!.isVerified == false ? "  Pending":"  Verified", style: TextStyle(
                                               fontSize: 12,color: Colors.white
                                           )),
                                         ),

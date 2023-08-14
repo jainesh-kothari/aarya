@@ -11,6 +11,8 @@ import '../language/app_translations.dart';
 import 'package:draw_graph/draw_graph.dart';
 import 'package:draw_graph/models/feature.dart';
 
+import 'children_height_and_weight_graph.dart';
+
 class GrowthMonitoring extends StatefulWidget {
 
   String? userId;
@@ -230,6 +232,7 @@ class _GrowthMonitoringState extends State<GrowthMonitoring> {
                               padding: const EdgeInsets.only(left: 12.0,top: 8.0,right: 8.0),
                               child: TextField(
                                 controller: height_controller,
+                                keyboardType: TextInputType.number,
                                 decoration: InputDecoration(
                                   contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
                                   enabledBorder: OutlineInputBorder(
@@ -261,6 +264,7 @@ class _GrowthMonitoringState extends State<GrowthMonitoring> {
                               padding: const EdgeInsets.only(left: 12.0,top: 8.0,right: 8.0),
                               child: TextField(
                                 controller: weight_controller,
+                                keyboardType: TextInputType.number,
                                 decoration: InputDecoration(
                                   contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
                                   enabledBorder: OutlineInputBorder(
@@ -349,42 +353,26 @@ class _GrowthMonitoringState extends State<GrowthMonitoring> {
                             ),
 
 
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-
-                                Padding(
-                                  padding: const EdgeInsets.all(20.0),
-                                  child: MaterialButton(
-                                    height: 40,
-                                    onPressed: () {
-                                      Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => ChildrenHeightData(userId)));
-                                    },
-                                    color: Color(AppConstants.BLUE_COLOR[0]),
-                                    elevation: 0,
-                                    shape:RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-                                    child: Text("Pervious Height",style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14,color: Colors.white)),
-                                  ),
+                            Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(20.0),
+                                child: MaterialButton(
+                                  height: 40,
+                                  onPressed: () {
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (BuildContext context) =>
+                                                ChildrenHeightAndWeightView(userId)));
+                                  },
+                                  color: Color(AppConstants.BLUE_COLOR[0]),
+                                  elevation: 0,
+                                  shape:RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                                  child: Text("Pervious Height & Weight",style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14,color: Colors.white)),
                                 ),
+                              ),
+                            ),
 
-                                Padding(
-                                  padding: const EdgeInsets.all(20.0),
-                                  child: MaterialButton(
-                                    height: 40,
-                                    onPressed: () {
-                                      Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (BuildContext context) =>
-                                                  ChildrenWeightData(userId)));
-                                    },
-                                    color: Color(AppConstants.BLUE_COLOR[0]),
-                                    elevation: 0,
-                                    shape:RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-                                    child: Text("Pervious Weight",style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14,color: Colors.white)),
-                                  ),
-                                ),
-                              ],
-                            )
+
                           ],
                         ),
                       ),

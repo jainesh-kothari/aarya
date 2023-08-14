@@ -44,6 +44,7 @@ class User {
   String? lastName;
   String? mobile;
   String? email;
+  String? centerId;
   List<Roles>? roles;
   bool? isArya;
   bool? isGnm;
@@ -58,6 +59,7 @@ class User {
       this.email,
       this.roles,
       this.isArya,
+      this.centerId,
       this.is_sathin,
       this.isGnm});
 
@@ -68,6 +70,7 @@ class User {
     lastName = json['lastName'];
     mobile = json['mobile'];
     email = json['email'];
+    centerId = json['centerId'];
     if (json['roles'] != null) {
       roles = <Roles>[];
       json['roles'].forEach((v) {
@@ -86,6 +89,7 @@ class User {
     data['middleName'] = this.middleName;
     data['lastName'] = this.lastName;
     data['mobile'] = this.mobile;
+    data['centerId'] = this.centerId;
     data['email'] = this.email;
     if (this.roles != null) {
       data['roles'] = this.roles!.map((v) => v.toJson()).toList();

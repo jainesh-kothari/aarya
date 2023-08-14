@@ -61,12 +61,12 @@ class _LadiesHomePageState extends State<LadiesHomePage> {
   @override
   void initState()  {
     super.initState();
-    _getData();
+    _getData(context);
   }
 
-  _getData() async {
+  _getData(BuildContext context) async {
 
-    _dashboard = (await ApiService().getWomenDashBoard()) as WomenHomePageModel;
+    _dashboard = (await ApiService().getWomenDashBoard(context)) as WomenHomePageModel;
 
     list = _dashboard.data!;
 
@@ -134,17 +134,13 @@ class _LadiesHomePageState extends State<LadiesHomePage> {
 
       visible = false;
 
-      print(women_cat_1);
-      print(women_cat_2);
-      print(women_cat_3);
-
-
     });
   }
 
 
   @override
   Widget build(BuildContext context) {
+
 
 
     return Scaffold(

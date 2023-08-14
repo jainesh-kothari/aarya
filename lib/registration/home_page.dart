@@ -2,6 +2,7 @@ import 'package:arya/children/child_home_page.dart';
 import 'package:arya/ladies/ladies_home_page.dart';
 import 'package:arya/language/app_translations.dart';
 import 'package:arya/ladies/ladies_list_view.dart';
+import 'package:arya/registration/ladies_dashboard.dart';
 import 'package:arya/registration/my_profile.dart';
 import 'package:arya/start_up/change_language.dart';
 import 'package:arya/util/appcontants.dart';
@@ -11,6 +12,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../selfhelpgroup/self_help_group_listview.dart';
+import '../start_up/contact_us.dart';
 import 'child_dashboard.dart';
 import 'login_screen.dart';
 
@@ -243,28 +245,35 @@ class _HomePageState extends State<HomePage> {
 
               children: [
 
-                ListTile(
-                  title: Text("Ladies Dashboard"),
-                  onTap: (){
 
-                    if(is_gnm) {
-                      Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => ChartHomePage()));
-                    } else{
-                      Fluttertoast.showToast(msg: "User not register as GNM");
-                    }
-                  },
+                Visibility(
+                  visible: is_gnm,
+                  child: ListTile(
+                    title: Text("Ladies Dashboard"),
+                    onTap: (){
+
+                      if(is_gnm) {
+                        Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => LadiesDashBoard()));
+                      } else{
+                        Fluttertoast.showToast(msg: "User not register as GNM");
+                      }
+                    },
+                  ),
                 ),
 
-                ListTile(
-                  title: Text("Child Dashboard"),
-                  onTap: (){
+                Visibility(
+                  visible: is_arya,
+                  child: ListTile(
+                    title: Text("Child Dashboard"),
+                    onTap: (){
 
-                    if(is_arya) {
-                      Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => ChartHomePage()));
-                    } else{
-                      Fluttertoast.showToast(msg: "User not register as Arya");
-                    }
-                  },
+                      if(is_arya) {
+                        Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => ChartHomePage()));
+                      } else{
+                        Fluttertoast.showToast(msg: "User not register as Arya");
+                      }
+                    },
+                  ),
                 ),
 
               ],
@@ -288,6 +297,7 @@ class _HomePageState extends State<HomePage> {
               leading: Icon(Icons.contacts), title: Text("Contact Us"),
               onTap: () {
                 Navigator.pop(context);
+                Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => ContactUs()));
               },
             ),
             ListTile(

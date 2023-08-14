@@ -1,9 +1,9 @@
-import 'package:arya/selfhelpgroup/details_of_lady_club.dart';
 import 'package:arya/selfhelpgroup/add_self_help_group.dart';
 import 'package:arya/language/app_translations.dart';
 import 'package:arya/libary/api_service.dart';
 import 'package:arya/model/self_help_group_list_view.dart';
-import 'package:arya/selfhelpgroup/self_help_group_date_view.dart';
+import 'package:arya/selfhelpgroup/edit_self_help_group.dart';
+import 'package:arya/selfhelpgroup/meeting_listview.dart';
 import 'package:arya/util/appcontants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,11 +20,22 @@ class _LadiesSelfHelpListviewState extends State<LadiesSelfHelpListview> {
   AppConstants api = AppConstants();
 
   late Future<List<SelfHelpGroupListViewModelData>?> _club_list;
+  List<SelfHelpGroupListViewModelData>? list = [];
+
+  int list_size = 0;
 
   @override
   void initState() {
     super.initState();
+    getDetails();
+  }
+
+  getDetails() async {
     _club_list = ApiService().getSelfHelpGroupListViewModel();
+     list = await _club_list;
+     setState(() {
+       list_size = list!.length;
+     });
   }
 
 
@@ -68,11 +79,10 @@ class _LadiesSelfHelpListviewState extends State<LadiesSelfHelpListview> {
                             itemBuilder: (context,index) {
 
                               var todo = snapshot.data?[index];
-
                               return InkWell(
                                 onTap: () {
                                  // Navigator.push(context, MaterialPageRoute(builder: (context) => LadiesGroupDetails(todo?.id)));
-                                  Navigator.push(context, MaterialPageRoute(builder: (context) => ListViewBuilder()));
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => MeetingListView(todo?.id)));
                                 },
                                 child: Card(
                                     elevation: 8,
@@ -145,53 +155,32 @@ class _LadiesSelfHelpListviewState extends State<LadiesSelfHelpListview> {
                             separatorBuilder: (context,index) {
                               return Container();
                             },
-                            itemCount: snapshot.data!.length),
+                            itemCount: list_size),
                       );
                     },
                   ),
                 ),
               ])),
 
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => AddSelfHelpGroup()));
-        },
-        backgroundColor: Colors.blue,
-        child: const Icon(Icons.edit),
-      ),
+      floatingActionButton: _getFAB(),
     );
   }
 
-  Future<void> _showAlertDialog() async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog( // <-- SEE HERE
-          title: const Text('Delete Club'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: const <Widget>[
-                Text('Are you sure want to delete this club?'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('No'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('Yes'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
+  Widget _getFAB() {
+    if (list_size == 0) {
+      return FloatingActionButton(
+          backgroundColor: Colors.blue,
+          child: Icon(Icons.add),
+          onPressed: () {
+            Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => AddSelfHelpGroup()));
+          });
+    } else {
+      return FloatingActionButton(
+          backgroundColor: Colors.blue,
+          child: Icon(Icons.edit),
+          onPressed: () {
+            Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => EditSelfHelpGroup(list![0].id.toString())));
+          });
+    }
   }
 }

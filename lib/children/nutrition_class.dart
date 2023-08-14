@@ -28,26 +28,23 @@ class _NutritionProcessState extends State<NutritionProcess> {
   late List<BubbleData> _suppliment_texts = [];
   List<String> _supplement_ids = [];
 
-  late Future<List<FoodReference>?> _intervention_list;
-  late List<bool> _intervention_checked;
+  List<FoodReference> _intervention_list =[];
+  late List<BubbleData> _intervention_texts = [];
+  List<String> _intervention_ids = [];
 
   bool _isCheckedTHR = false;
-  bool _isCheckedFood = false;
 
-  String radioButtonItem = 'ONE';
+  String radioButtonItem = 'YES';
   int id = 1;
   AppConstants api = new AppConstants();
+
+  TextEditingController thr_controller = TextEditingController(text:'');
+  TextEditingController hemoglobin_controller = TextEditingController(text:'');
 
 
   getSupplementData() async {
 
-    _intervention_list = ApiService().getChildNutritionalInterventionList(user_id.toString());
-
-    _intervention_list.then((value) => {
-      _intervention_checked = List<bool>.filled(value!.length, false)
-    });
-
-
+    _intervention_list = (await ApiService().getChildNutritionalInterventionList(user_id.toString()))!;
 
     _supplement_list = (await ApiService().getChildNutritionalSupplements(user_id.toString()))!;
 
@@ -56,6 +53,12 @@ class _NutritionProcessState extends State<NutritionProcess> {
         BubbleData bubbleData = BubbleData(id : "${_supplement_list![i].id.toString().trim()}", name: "${_supplement_list![i].name.toString()}", flag: false);
         _suppliment_texts.add(bubbleData);
       }
+
+      for (var i = 0; i < _intervention_list!.length; i++) {
+        BubbleData bubbleData = BubbleData(id : "${_intervention_list![i].id.toString().trim()}", name: "${_intervention_list![i].name.toString()}", flag: false);
+        _intervention_texts.add(bubbleData);
+      }
+
     });
   }
 
@@ -238,7 +241,7 @@ class _NutritionProcessState extends State<NutritionProcess> {
                                 groupValue: id,
                                 onChanged: (val) {
                                   setState(() {
-                                    radioButtonItem = 'ONE';
+                                    radioButtonItem = 'YES';
                                     id = 1;
                                   });
                                 },
@@ -252,7 +255,7 @@ class _NutritionProcessState extends State<NutritionProcess> {
                                 groupValue: id,
                                 onChanged: (val) {
                                   setState(() {
-                                    radioButtonItem = 'TWO';
+                                    radioButtonItem = 'NO';
                                     id = 2;
                                   });
                                 },
@@ -296,7 +299,8 @@ class _NutritionProcessState extends State<NutritionProcess> {
                         Padding(
                           padding: const EdgeInsets.only(left: 12.0,top: 8.0,right: 8.0),
                           child: TextField(
-                            // controller: name_controller,
+                            keyboardType: TextInputType.number,
+                             controller: thr_controller,
                             decoration: InputDecoration(
                               contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
                               enabledBorder: OutlineInputBorder(
@@ -309,45 +313,6 @@ class _NutritionProcessState extends State<NutritionProcess> {
                           ),
                         ),
 
-                        CheckboxListTile(
-                          title: Text(AppTranslations.of(context)!.text("extra_food"), style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.w500,color: Colors.black)),
-                          value: _isCheckedFood,
-                          onChanged: (val) {
-                            setState(
-                                  () {
-                                _isCheckedFood = val!;
-                              },
-                            );
-                          },
-                        ),
-
-                        Padding(
-                          padding:  const EdgeInsets.only(left: 8.0,right: 8.0),
-                          child: Divider(color: Colors.grey[350]),
-                        ),
-
-                        Padding(
-                          padding: const EdgeInsets.only(left: 12.0,top: 8.0),
-                          child: Text(AppTranslations.of(context)!.text("no_of_days_thr"), style: TextStyle(
-                              fontSize: 14, color: Colors.black,fontWeight: FontWeight.bold
-                          )),
-                        ),
-
-                        Padding(
-                          padding: const EdgeInsets.only(left: 12.0,top: 8.0,right: 8.0),
-                          child: TextField(
-                            // controller: name_controller,
-                            decoration: InputDecoration(
-                              contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-                              enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Color(AppConstants.GRAY_COLOR[0]))
-                              ),
-                              border: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Color(AppConstants.GRAY_COLOR[0]))
-                              ),
-                            ),
-                          ),
-                        ),
 
 
                         Padding(
@@ -360,7 +325,8 @@ class _NutritionProcessState extends State<NutritionProcess> {
                         Padding(
                           padding: const EdgeInsets.only(left: 12.0,top: 8.0,right: 8.0),
                           child: TextField(
-                            // controller: name_controller,
+                             controller: hemoglobin_controller,
+                            keyboardType: TextInputType.number,
                             decoration: InputDecoration(
                               contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
                               enabledBorder: OutlineInputBorder(
@@ -389,51 +355,91 @@ class _NutritionProcessState extends State<NutritionProcess> {
                         ),
 
                         Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: FutureBuilder<List<FoodReference>?>(
-                              future: _intervention_list,
-                              builder: (context, snapshot) {
-
-                                print(snapshot.hasData);
-
-
-                                if(!snapshot.hasData) {
-                                  return const Center(child: Text("No Medicine Found"));
-                                }
-
-                                return ListView.separated(
-                                    shrinkWrap: true,
-                                    itemBuilder: (context,index) {
-                                      var todo = snapshot.data?[index];
-                                      return CheckboxListTile(
-
-                                        title: Text(todo!.name.toString(),
-                                            style: TextStyle(
-                                                fontSize: 13.0,
-                                                fontWeight: FontWeight.w500,
-                                                color: Colors.black)),
-                                        value: _intervention_checked[index],
-                                        onChanged: (val) {
-                                          setState(
-                                                () {
-                                                  _intervention_checked[index] = val!;
-                                            },
-                                          );
-                                        },
-                                      );;
-                                    },
-                                    separatorBuilder: (context,index) {
-                                      return Container();
-                                    },
-                                    itemCount: snapshot.data?.length ?? 0);
-                              },
-                            )
+                          padding: const EdgeInsets.all(8.0),
+                          child:   ListView.builder(
+                              itemCount: _intervention_list.length,
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemBuilder: (context, index) {
+                                return CheckboxListTile(
+                                  title: Text(_intervention_texts[index].name.toString(),
+                                      style: const TextStyle(
+                                          fontSize: 13.0,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.black)),
+                                  value: _intervention_texts[index].flag,
+                                  onChanged: (val) {
+                                    setState(
+                                          () {
+                                        _intervention_texts[index].flag = val!;
+                                      },
+                                    );
+                                  },
+                                );
+                              }),
                         ),
 
                         InkWell(
-                          onTap: () {
-                            //  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => HomePage()));
-                          },
+                          onTap: () async {
+                                  _intervention_ids = [];
+
+                                  for (var i = 0;
+                                      i < _intervention_texts!.length;
+                                      i++) {
+                                    if (_intervention_texts[i].flag == true) {
+                                      String value =
+                                          '"${_intervention_texts[i].id.toString()}"';
+
+                                      _intervention_ids.add(value);
+                                    }
+                                  }
+
+                                  double hemoglobin = double.parse(hemoglobin_controller.text);
+                                  double thr_days = double.parse(thr_controller.text);
+
+                                  bool solid_foods = radioButtonItem == "YES" ? true : false ;
+
+                                  if(hemoglobin > 5 && hemoglobin <30) {
+
+                                  } else {
+                                    Fluttertoast.showToast(msg: "hemoglobin should be between 5 to 30");
+                                    return;
+                                  }
+
+
+                                  String? response = await ApiService().addChildInterventionDetails(
+                                      user_id.toString(), _intervention_ids.toString(), hemoglobin,
+                                      thr_days,solid_foods);
+
+                                  if (response == "201") {
+                                    Alert(
+                                      context: context,
+                                      style: util().alertStyle,
+                                      type: AlertType.success,
+                                      title: "",
+                                      desc: "Data added Successfully",
+                                      buttons: [
+                                        DialogButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          color:
+                                              Color.fromRGBO(0, 179, 134, 1.0),
+                                          radius: BorderRadius.circular(0.0),
+                                          child: const Text(
+                                            "Okay",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 20),
+                                          ),
+                                        ),
+                                      ],
+                                    ).show();
+                                  } else {
+                                    Fluttertoast.showToast(
+                                        msg: "Something went wrong");
+                                  }
+                                },
                           child: Padding(
                             padding:
                             const EdgeInsets.only(left: 40.0, right: 40,top: 20,bottom: 20),
