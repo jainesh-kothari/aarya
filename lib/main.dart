@@ -4,7 +4,6 @@ import 'package:arya/start_up/spalsh_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(LocalisedApp());

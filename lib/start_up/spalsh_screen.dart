@@ -34,14 +34,14 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   @override
   void initState() {
     super.initState();
-    // getDetails();
-    getLoginDetails();
+    getDetails();
+    // getLoginDetails();
   }
 
   getDetails() async {
     AppVersionGS? response = await ApiService().getAndroidAppVersion();
 
-    if(response!.value.toString() != "v1"){
+    if(response?.value.toString() != "v1"){
       showDialog(
         context: context,
         builder: (BuildContext context) {

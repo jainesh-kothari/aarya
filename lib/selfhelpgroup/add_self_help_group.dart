@@ -618,7 +618,7 @@ class _SelfHelpGroupState extends State<AddSelfHelpGroup> {
                                           style: TextStyle(color: Colors.white),
                                           iconEnabledColor:Colors.black,
                                           items: <String>[
-                                            'सरपंच',
+                                            'साथिन',
                                             'AWW'
                                           ].map<DropdownMenuItem<String>>((String value) {
                                             return DropdownMenuItem<String>(

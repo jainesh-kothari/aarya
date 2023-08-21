@@ -1474,14 +1474,11 @@ class ApiService {
 
   Future<AppVersionGS?> getAndroidAppVersion() async {
     try {
-      _sharedPreferences = await SharedPreferences.getInstance();
-      String token = _sharedPreferences.getString(AppConstants.TOKEN)!;
 
       var url = Uri.parse("$API_LINK/admin/system-config/android-version");
 
       final headers = <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': "Bearer $token"
       };
 
       var response = await http.get(url, headers: headers);
